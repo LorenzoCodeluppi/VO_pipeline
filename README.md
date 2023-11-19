@@ -18,10 +18,10 @@ Use `Pipenv` to create a virtual environment for the project:
 pipenv shell
 ```
 
-Install the required libraries from the `Pipfile`:
+Install the required libraries from the `requirements.txt`:
 
 ```
-pipenv install
+pip install -r requirements.txt
 ```
 ### 4. Run the code
 
