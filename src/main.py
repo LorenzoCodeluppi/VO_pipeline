@@ -75,7 +75,7 @@ def run_pipeline(dataset, state, bootstrap_frames, last_frame, database_image, i
     prev_img = database_image
 
     # for i in range(bootstrap_frames[1] + 1, last_frame + 1):
-    for i in range(bootstrap_frames[1] + 1, 30):
+    for i in range(bootstrap_frames[1] + 1, 35):
         # print(f"\n\nProcessing frame {i}\n=====================")
         if dataset == Dataset.KITTI:
             image = cv2.imread(f"{kitti_path}/05/image_0/{i:06d}.png", cv2.IMREAD_GRAYSCALE)
@@ -93,10 +93,11 @@ def run_pipeline(dataset, state, bootstrap_frames, last_frame, database_image, i
 
         f, axarr = plt.subplots(1,2)
 
-        axarr[0].imshow(prev_img, cmap="gray")
-        plot_trajectory(axarr[1], trajectory)
+        # axarr[0].imshow(prev_img, cmap="gray")
+        # plot_trajectory(axarr[1], trajectory)
 
-        plt.pause(0.01)
+        # plt.pause(0.01)
+        # plt.show()
         prev_img = image
     
 

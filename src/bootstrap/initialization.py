@@ -53,5 +53,5 @@ def initialization(frame1, frame2, K) -> State:
  
     # plot_point_cloud(points_3d, np.eye(3), t.flatten())
     # plot_feature_2D(points_3d, t.flatten())
- 
-    return State(dst_pts, points_3d.T)
+
+    return State(dst_pts.T, points_3d)

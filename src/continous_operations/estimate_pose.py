@@ -24,14 +24,8 @@ def estimate_pose(state: State, tracked_landmarks, tracked_keypoints, K):
 
   R, _ = cv2.Rodrigues(rvec)
 
-  # Now R and t contain the estimated rotation and translation
-  print("Estimated R:\n", R)
-  print("Estimated t:\n", t)
-
   # Use inliers for further processing if needed
   inlier_keypoints = tracked_keypoints[inliers.ravel()]
   inlier_landmarks = tracked_landmarks[inliers.ravel()]
 
-  state.update_state(inlier_keypoints, inlier_landmarks)
-
-  return -np.matmul(R.T, t)
+  return R, -np.matmul(R.T, t), inlier_keypoints, inlier_landmarks
