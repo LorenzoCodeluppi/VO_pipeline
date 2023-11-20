@@ -13,3 +13,13 @@ class State():
   def __init__(self, keypoints, landmarks):
     self.keypoints = keypoints
     self.landmarks = landmarks
+
+  def update_state(self, new_keypoints, new_landmarks):
+    # Implement logic for updating the state based on new observations
+    pass
+
+  def get_keypoints(self):
+      return self.keypoints
+
+  def get_landmarks(self):
+      return self.landmarks

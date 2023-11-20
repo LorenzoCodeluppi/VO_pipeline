@@ -30,7 +30,7 @@ def plot_point_cloud(points_3d, R, t, set_axis_limit=True, equal_axis=False):
   # Create a 3D scatter plot
   fig = plt.figure()
   ax = fig.add_subplot(projection='3d')
-  ax.scatter(x, y, z, marker='o')
+  ax.scatter(x, y, z, s=1, marker='o')
   drawCamera(ax, t, R, length_scale=10)
 
   if not set_axis_limit:
@@ -60,7 +60,7 @@ def plot_feature_2D(points_3d, t, set_axis_limit=True, equal_axis=False):
   # Create a 3D scatter plot
   fig = plt.figure()
   ax = fig.add_subplot()
-  ax.scatter(x, z, marker='o')
+  ax.scatter(x, z, s=1, marker='o')
   ax.scatter(t[0], t[2], marker='x')
 
   if not set_axis_limit:
