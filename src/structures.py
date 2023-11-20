@@ -47,6 +47,15 @@ class State():
     else:
       self.camera_pose_candidates = np.concatenate((self.camera_pose_candidates, new_camera_pose_candidates), axis=-1)
 
+  def filter_out_candidates(self, mask):
+    if self.candidates_points is None:
+      raise Exception
+    
+    self.update_candidates_points(self.candidates_points[:,mask == 1], replace=True)
+    self.update_first_obs_candidates(self.first_obs_candidates[:,mask == 1], replace=True)
+    self.update_camera_pose_candidates(self.camera_pose_candidates[:,mask == 1], replace=True)
+    
+
   def get_all_keypoints(self):
     if self.keypoints is None:
       raise Exception
