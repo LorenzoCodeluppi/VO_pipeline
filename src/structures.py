@@ -15,11 +15,11 @@ class State():
     self.landmarks = landmarks
 
   def update_state(self, new_keypoints, new_landmarks):
-    # Implement logic for updating the state based on new observations
-    pass
+    self.keypoints = new_keypoints
+    self.landmarks = new_landmarks
 
   def get_keypoints(self):
-      return self.keypoints
+    return self.keypoints
 
   def get_landmarks(self):
-      return self.landmarks
+    return self.landmarks

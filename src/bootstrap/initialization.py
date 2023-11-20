@@ -34,7 +34,7 @@ def initialization(frame1, frame2, K) -> State:
     # Find fundamental matrix using RANSAC
     E, mask = cv2.findEssentialMat(src_pts, dst_pts, K, cv2.FM_RANSAC, repojection_error_tollerance, confidence)
 
-    plot_matched_points_with_lines(frame1, src_pts, dst_pts, mask)
+    # plot_matched_points_with_lines(frame1, src_pts, dst_pts, mask)
     
     # Filter out outliers
     src_pts = src_pts[mask.ravel() == 1]
@@ -49,9 +49,9 @@ def initialization(frame1, frame2, K) -> State:
     points_3d_homogeneous = cv2.triangulatePoints(M1, M2, src_pts.T, dst_pts.T)
    
     # Normalize homogeneous coordinates
-    points_3d = points_3d_homogeneous / points_3d_homogeneous[-1,:]
+    points_3d = points_3d_homogeneous[:3,:] / points_3d_homogeneous[-1,:]
  
-    plot_point_cloud(points_3d, np.eye(3), t.flatten())
-    plot_feature_2D(points_3d, t.flatten())
-
-    return State(dst_pts, points_3d)
+    # plot_point_cloud(points_3d, np.eye(3), t.flatten())
+    # plot_feature_2D(points_3d, t.flatten())
+ 
+    return State(dst_pts, points_3d.T)
