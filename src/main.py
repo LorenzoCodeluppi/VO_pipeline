@@ -8,6 +8,7 @@ from structures import Dataset
 from bootstrap.initialization import initialization
 from continous_operations.process_frame import process_frame
 from visualization_tools.plot_trajectory import plot_trajectory
+from structures import State
 
 ROOT_DIR = Path(__file__).parent.parent
 
@@ -69,7 +70,7 @@ def load_bootstrap_images(dataset, bootstrap_frames, images):
     
     return img0, img1
 
-def run_pipeline(dataset, state, bootstrap_frames, last_frame, database_image, images, K):
+def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_image, images, K):
     # Continuous operation
     trajectory = np.zeros((0, 3))
     prev_img = database_image
@@ -88,15 +89,24 @@ def run_pipeline(dataset, state, bootstrap_frames, last_frame, database_image, i
 
         t = process_frame(state, prev_img, image, K)
 
+        candidates_points = state.get_candidates_points()
+        keypoints = state.get_keypoints()
+    
         # Update the trajectory array
         trajectory = np.vstack([trajectory, t])
 
-        f, axarr = plt.subplots(1,2)
+        f, axarr = plt.subplots(2,1)
+        f.set_figwidth(12)
+        f.set_figheight(7)
 
-        # axarr[0].imshow(prev_img, cmap="gray")
-        # plot_trajectory(axarr[1], trajectory)
+        axarr[0].imshow(prev_img, cmap="gray")
 
-        # plt.pause(0.01)
+        # axarr[0].scatter(candidates_points[0,:], candidates_points[1,:], s=1, c='red', marker='o')
+        # axarr[0].scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
+
+        plot_trajectory(axarr[1], trajectory)
+        plt.pause(0.1)
+        plt.close()
         # plt.show()
         prev_img = image
     

@@ -3,13 +3,16 @@ import numpy as np
 
 from structures import State
 
+# KLT has no bounds, point can be outside of the image... need a smart fix
 def keypoint_association(state: State, database_image, query_image, K):
   previous_keypoints = state.get_keypoints()
   landmarks = state.get_landmarks()
   candidates_points = state.get_candidates_points()
+  image_height, image_width = query_image.shape
+
   lk_params = dict(winSize=(10, 10),
     maxLevel=2,
-    criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 50, 0.0003))
+    criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 20, 0.03))
 
   next_keypoints, status, err = cv2.calcOpticalFlowPyrLK(
     database_image,
@@ -27,8 +30,8 @@ def keypoint_association(state: State, database_image, query_image, K):
       None,
       **lk_params
     )
-
-    state.filter_out_candidates(candidates_status.flatten())
+   
+    state.filter_out_candidates(next_candidates_keypoints.T, candidates_status.flatten())
 
   if status is None:
     return

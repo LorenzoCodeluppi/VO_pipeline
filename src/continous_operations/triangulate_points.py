@@ -16,7 +16,7 @@ def get_candidate_points(tracked_keypoints, query_image):
   corners = cv2.cornerHarris(query_image, blockSize=block_size, ksize=k_size, k=k)
   _, corners_binary = cv2.threshold(corners, threshold * corners.max(), 255, 0)
 
-  new_keypoints = np.transpose(np.nonzero(corners_binary))
+  new_keypoints = np.transpose(np.nonzero(corners_binary.T))
 
   # TODO: check
   new_keypoints = np.array(new_keypoints)
