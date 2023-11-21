@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 
 from structures import State
 
-def get_candidate_points(tracked_keypoints, query_image):
+def evaluate_new_candidates(tracked_keypoints, query_image):
 
   # Harris parameters
-  block_size = 2
-  k_size = 3
+  block_size = 4
+  k_size = 5
   k = 0.04
-  threshold = 0.01
+  threshold = 0.08
   min_distance = 10 # not sure about this
 
   corners = cv2.cornerHarris(query_image, blockSize=block_size, ksize=k_size, k=k)
@@ -25,8 +25,3 @@ def get_candidate_points(tracked_keypoints, query_image):
   new_keypoints_filtered = new_keypoints[~is_close]
   
   return new_keypoints_filtered
-
-
-def triangulate_points(state: State, query_image):
-  candidate_keypoints = get_candidate_points(state.get_all_keypoints(), query_image)
-  return candidate_keypoints

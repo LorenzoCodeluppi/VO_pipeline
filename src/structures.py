@@ -18,9 +18,13 @@ class State():
     self.keypoints = keypoints
     self.landmarks = landmarks
 
-  def update_state(self, new_keypoints, new_landmarks):
-    self.keypoints = new_keypoints
-    self.landmarks = new_landmarks
+  def update_state(self, new_keypoints, new_landmarks, update = False):
+    if not update:
+      self.keypoints = new_keypoints
+      self.landmarks = new_landmarks
+    else:
+      self.keypoints = np.concatenate((self.keypoints, new_keypoints), axis=1)
+      self.landmarks = np.concatenate((self.landmarks, new_landmarks), axis=1)
   
   def update_candidates_points(self, new_candidates_points, replace = False):
     assert new_candidates_points.shape[0] == 2; "Wrong candidate points dimension"
@@ -55,8 +59,11 @@ class State():
     self.update_candidates_points(self.candidates_points[:,mask == 1], replace=True)
     self.update_first_obs_candidates(self.first_obs_candidates[:,mask == 1], replace=True)
     self.update_camera_pose_candidates(self.camera_pose_candidates[:,mask == 1], replace=True)
-    
 
+  def move_candidates_to_keypoints(self, new_keypoints, new_landmarks, filter_mask):
+    self.update_state(new_keypoints, new_landmarks, update=True)
+    self.filter_out_candidates(self.get_candidates_points(), filter_mask)
+    
   def get_all_keypoints(self):
     if self.keypoints is None:
       raise Exception

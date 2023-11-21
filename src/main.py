@@ -91,6 +91,7 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
 
         candidates_points = state.get_candidates_points()
         keypoints = state.get_keypoints()
+        landmarks = state.get_landmarks()
     
         # Update the trajectory array
         trajectory = np.vstack([trajectory, t])
@@ -100,11 +101,11 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         f.set_figheight(7)
 
         axarr[0].imshow(prev_img, cmap="gray")
+        axarr[0].scatter(candidates_points[0,:], candidates_points[1,:], s=1, c='red', marker='o')
+        axarr[0].scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
 
-        # axarr[0].scatter(candidates_points[0,:], candidates_points[1,:], s=1, c='red', marker='o')
-        # axarr[0].scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
-
-        plot_trajectory(axarr[1], trajectory)
+        plot_trajectory(axarr[1], trajectory, landmarks)
+        
         plt.pause(0.1)
         plt.close()
         # plt.show()
@@ -113,7 +114,7 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
 
 
 if __name__ == "__main__":
-    dataset = Dataset.KITTI
+    dataset = Dataset.MALAGA
     bootstrap_frames = [0, 2]
 
     K, images, last_frame = load_dataset(dataset)
