@@ -25,7 +25,11 @@ def estimate_pose(state: State, tracked_landmarks, tracked_keypoints, K):
   R, _ = cv2.Rodrigues(rvec)
 
   # Use inliers for further processing if needed
-  inlier_keypoints = tracked_keypoints[inliers.ravel()]
-  inlier_landmarks = tracked_landmarks[inliers.ravel()]
+  if inliers is not None:
+    inlier_keypoints = tracked_keypoints[inliers.ravel()]
+    inlier_landmarks = tracked_landmarks[inliers.ravel()]
 
-  return R, -np.matmul(R.T, t), inlier_keypoints, inlier_landmarks
+    return R, -np.matmul(R.T, t), inlier_keypoints, inlier_landmarks
+  
+  # default return in case of no solution
+  return R, -np.matmul(R.T, t), tracked_keypoints, tracked_landmarks

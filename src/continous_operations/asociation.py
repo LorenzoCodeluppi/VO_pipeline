@@ -30,8 +30,8 @@ def keypoint_association(state: State, database_image, query_image, K):
       None,
       **lk_params
     )
-   
-    state.filter_out_candidates(next_candidates_keypoints.T, candidates_status.flatten())
+    if next_candidates_keypoints is not None:
+      state.filter_out_candidates(next_candidates_keypoints.T, candidates_status.flatten())
 
   if status is None:
     return

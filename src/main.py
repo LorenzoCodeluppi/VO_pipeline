@@ -104,8 +104,8 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         axarr[0].scatter(candidates_points[0,:], candidates_points[1,:], s=1, c='red', marker='o')
         axarr[0].scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
 
-        plot_trajectory(axarr[1], trajectory, landmarks)
-        
+        plot_trajectory(axarr[1], trajectory)
+
         plt.pause(0.1)
         plt.close()
         # plt.show()
@@ -114,7 +114,7 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
 
 
 if __name__ == "__main__":
-    dataset = Dataset.MALAGA
+    dataset = Dataset.KITTI
     bootstrap_frames = [0, 2]
 
     K, images, last_frame = load_dataset(dataset)
