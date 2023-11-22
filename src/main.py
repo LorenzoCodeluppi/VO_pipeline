@@ -111,11 +111,20 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         
         prev_img = image
     
+# TODO: tune this
+def select_dataset(dataset: Dataset):
+    if dataset == Dataset.PARKING:
+        return [0, 5]
+    if dataset == dataset.KITTI:
+        return [0, 3]
+    if dataset == Dataset.MALAGA:
+        return [0, 2]
 
 
 if __name__ == "__main__":
     dataset = Dataset.MALAGA
-    bootstrap_frames = [0, 2]
+
+    bootstrap_frames = select_dataset(dataset)
 
     K, images, last_frame = load_dataset(dataset)
 
