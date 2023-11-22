@@ -109,6 +109,7 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         plt.pause(0.1)
         plt.close()
         # plt.show()
+
         prev_img = image
     
 

@@ -3,7 +3,7 @@ import numpy as np
 from .asociation import keypoint_association
 from .estimate_pose import estimate_pose
 from .evaluate_points import evaluate_new_candidates
-from .trianguate_candidates import triangulate_points
+from .triangulate_candidates import triangulate_points
 from structures import State
 
 def process_frame(state: State, database_image, query_image, K):
@@ -28,5 +28,5 @@ def process_frame(state: State, database_image, query_image, K):
   # triangulate new points from candidates
   triangulate_points(state, R, t, K)
 
-  return t
+  return -np.matmul(R.T, t)
   
