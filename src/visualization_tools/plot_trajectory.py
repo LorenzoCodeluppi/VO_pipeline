@@ -13,4 +13,4 @@ def plot_trajectory(ax, trajectory, landmarks = None):
     if landmarks is not None:
         ax.scatter(landmarks[0,:], landmarks[2,:], s=10, c='black', marker='x')
 
-    plt.plot(x, z, marker='o')
+    plt.plot(x, z, marker='o', markersize=1, color="black")

@@ -75,8 +75,13 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
     trajectory = np.zeros((0, 3))
     prev_img = database_image
 
-    # for i in range(bootstrap_frames[1] + 1, last_frame + 1):
-    for i in range(bootstrap_frames[1] + 1, 35):
+    f, axarr = plt.subplots(2,1)
+    f.set_figwidth(12)
+    f.set_figheight(7)
+
+
+    for i in range(bootstrap_frames[1] + 1, last_frame + 1):
+    # for i in range(bootstrap_frames[1] + 1, 35):
         # print(f"\n\nProcessing frame {i}\n=====================")
         if dataset == Dataset.KITTI:
             image = cv2.imread(f"{kitti_path}/05/image_0/{i:06d}.png", cv2.IMREAD_GRAYSCALE)
@@ -96,26 +101,20 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         # Update the trajectory array
         trajectory = np.vstack([trajectory, t])
 
-        f, axarr = plt.subplots(2,1)
-        f.set_figwidth(12)
-        f.set_figheight(7)
-
         axarr[0].imshow(prev_img, cmap="gray")
         axarr[0].scatter(candidates_points[0,:], candidates_points[1,:], s=1, c='red', marker='o')
         axarr[0].scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
 
         plot_trajectory(axarr[1], trajectory)
-
         plt.pause(0.1)
-        plt.close()
-        # plt.show()
-
+        axarr[0].clear()
+        
         prev_img = image
     
 
 
 if __name__ == "__main__":
-    dataset = Dataset.KITTI
+    dataset = Dataset.MALAGA
     bootstrap_frames = [0, 2]
 
     K, images, last_frame = load_dataset(dataset)
