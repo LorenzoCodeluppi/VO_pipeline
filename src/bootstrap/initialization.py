@@ -32,7 +32,7 @@ def initialization(frame1, frame2, K) -> State:
     dst_pts = np.float32([kp2[m.trainIdx].pt for m in good_matches]).reshape(-1, 2)
 
     # Find fundamental matrix using RANSAC
-    E, mask = cv2.findEssentialMat(src_pts, dst_pts, K, cv2.FM_RANSAC, repojection_error_tollerance, confidence)
+    E, mask = cv2.findEssentialMat(src_pts, dst_pts, K, cv2.FM_RANSAC, confidence, repojection_error_tollerance)
 
     # plot_matched_points_with_lines(frame1, src_pts, dst_pts, mask)
     
