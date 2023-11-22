@@ -19,8 +19,6 @@ def plot_matched_points(image, keypoints, inlier_mask, plot_outliers=False):
     # Plot the image
     ax.imshow(image, cmap='gray')
 
-    print(keypoints[inlier_mask.ravel()].shape)
-
     # Plot the matched keypoints
     ax.plot(keypoints[inlier_mask.ravel() == 1, 0],
             keypoints[inlier_mask.ravel() == 1, 1],

@@ -2,9 +2,13 @@ import os
 from pathlib import Path
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 from structures import Dataset
 from bootstrap.initialization import initialization
+from continous_operations.process_frame import process_frame
+from visualization_tools.plot_trajectory import plot_trajectory
+from structures import State
 
 ROOT_DIR = Path(__file__).parent.parent
 
@@ -66,9 +70,18 @@ def load_bootstrap_images(dataset, bootstrap_frames, images):
     
     return img0, img1
 
-def run_pipeline(dataset, bootstrap_frames, last_frame, images):
+def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_image, images, K):
     # Continuous operation
+    trajectory = np.zeros((0, 3))
+    prev_img = database_image
+
+    f, axarr = plt.subplots(2,1)
+    f.set_figwidth(12)
+    f.set_figheight(7)
+
+
     for i in range(bootstrap_frames[1] + 1, last_frame + 1):
+    # for i in range(bootstrap_frames[1] + 1, 35):
         # print(f"\n\nProcessing frame {i}\n=====================")
         if dataset == Dataset.KITTI:
             image = cv2.imread(f"{kitti_path}/05/image_0/{i:06d}.png", cv2.IMREAD_GRAYSCALE)
@@ -79,16 +92,29 @@ def run_pipeline(dataset, bootstrap_frames, last_frame, images):
         else:
             assert False
 
-        # Makes sure that plots refresh.
-        cv2.imshow("Frame", image)
-        cv2.waitKey(10)
+        t = process_frame(state, prev_img, image, K)
 
+        candidates_points = state.get_candidates_points()
+        keypoints = state.get_keypoints()
+        landmarks = state.get_landmarks()
+    
+        # Update the trajectory array
+        trajectory = np.vstack([trajectory, t])
+
+        axarr[0].imshow(prev_img, cmap="gray")
+        axarr[0].scatter(candidates_points[0,:], candidates_points[1,:], s=1, c='red', marker='o')
+        axarr[0].scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
+
+        plot_trajectory(axarr[1], trajectory)
+        plt.pause(0.1)
+        axarr[0].clear()
+        
         prev_img = image
+    
 
-    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    dataset = Dataset.KITTI
+    dataset = Dataset.MALAGA
     bootstrap_frames = [0, 2]
 
     K, images, last_frame = load_dataset(dataset)
@@ -98,6 +124,6 @@ if __name__ == "__main__":
     # TODO: check the implementation
     state = initialization(frame1, frame2, K)
 
-    # run_pipeline(dataset, bootstrap_frames, last_frame, images)
+    run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K)
 
     
