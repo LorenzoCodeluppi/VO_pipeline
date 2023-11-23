@@ -12,15 +12,15 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   poses = state.get_camera_pose_candidates().reshape(3,4, candidates.shape[1])
   T = poses[:,-1,:] # 3xN
   
-# TRIAL WITH BEARING VECTORS FAIL
-  current_camera_pose_vec = np.tile((current_t[(1,2),None]), (1, candidates.shape[1]))
-  #Compute bearing vectors for current candidate point and current camera pose 
-  bearing_vector = utils.bearingvector(candidates,current_camera_pose_vec)
-  #Compute bearing vectors for first observation and first camera pose
-  first_obs_bearing_vector = utils.bearingvector(first_obs_candidates, T[(1,2),:])
+# # TRIAL WITH BEARING VECTORS FAIL
+#   current_camera_pose_vec = np.tile((current_t[(1,2),None]), (1, candidates.shape[1]))
+#   #Compute bearing vectors for current candidate point and current camera pose 
+#   bearing_vector = utils.bearingvector(candidates,current_camera_pose_vec)
+#   #Compute bearing vectors for first observation and first camera pose
+#   first_obs_bearing_vector = utils.bearingvector(first_obs_candidates, T[(1,2),:])
 
-  #Compute the angle between the two bearing vectors
-  angle_between = utils.angle(bearing_vector, first_obs_bearing_vector)
+#   #Compute the angle between the two bearing vectors
+#   angle_between = utils.angle(bearing_vector, first_obs_bearing_vector)
 
   poses = state.get_camera_pose_candidates()
   poses_reshaped = poses.reshape(3,4, candidates.shape[1])
@@ -43,10 +43,9 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   possible_new_landmarks = np.sum(mask)
   
   if possible_new_landmarks == 0 and triangulate_signal:
-    mask = distances > np.mean(distances)
+    mask = distances >= np.max(distances)
 
   if possible_new_landmarks > 0 or triangulate_signal:
-    print("Triangolazione")
     prev_poses = poses[:,mask]
     current_pose = np.hstack((current_R, current_t[:,None]))
     unique_poses = np.unique(prev_poses, axis = 1)
@@ -70,7 +69,8 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
         new_landmarks = np.concatenate((new_landmarks, points_3d), axis=1)
 
       filter_mask[indices] = False
-    print(new_landmarks.shape)
-    state.move_candidates_to_keypoints(candidates[:, ~filter_mask].astype(np.float32), new_landmarks, filter_mask)
+
+    if new_landmarks is not None:
+      state.move_candidates_to_keypoints(candidates[:, ~filter_mask].astype(np.float32), new_landmarks, filter_mask)
  
 

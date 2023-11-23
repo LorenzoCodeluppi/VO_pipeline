@@ -114,15 +114,15 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
 # TODO: tune this
 def select_dataset(dataset: Dataset):
     if dataset == Dataset.PARKING:
-        return [0, 5]
+        return [0, 10]
     if dataset == dataset.KITTI:
         return [0, 3]
     if dataset == Dataset.MALAGA:
-        return [0, 3]
+        return [0, 5]
 
 
 if __name__ == "__main__":
-    dataset = Dataset.KITTI
+    dataset = Dataset.MALAGA
 
     bootstrap_frames = select_dataset(dataset)
 
