@@ -27,7 +27,7 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   T = poses_reshaped[:,-1,:] # 3xN
 
   # parameters to tune
-  distance_threshold = 2.2
+  distance_threshold = 2
 
   # calculate the distance between each poses to the current pose (t), if > than threshold select them
   distances = np.linalg.norm(T - current_t[:,None], axis=0)
