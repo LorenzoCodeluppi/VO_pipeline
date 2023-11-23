@@ -2,12 +2,24 @@ import cv2
 import numpy as np
 
 from structures import State
+from utils import utility_tools as utils
 
 def triangulate_points(state: State, current_R, current_t, K):
   candidates = state.get_candidates_points()
   first_obs_candidates = state.get_first_obs_candidates()
   poses = state.get_camera_pose_candidates().reshape(3,4, candidates.shape[1])
   T = poses[:,-1,:] # 3xN
+  
+# TRIAL WITH BEARING VECTORS FAIL
+  current_camera_pose_vec = np.tile((current_t[(1,2),None]), (1, candidates.shape[1]))
+  #Compute bearing vectors for current candidate point and current camera pose 
+  bearing_vector = utils.bearingvector(candidates,current_camera_pose_vec)
+  #Compute bearing vectors for first observation and first camera pose
+  first_obs_bearing_vector = utils.bearingvector(first_obs_candidates, T[(1,2),:])
+
+  #Compute the angle between the two bearing vectors
+  angle_between = utils.angle(bearing_vector, first_obs_bearing_vector)
+
 
   # parameters to tune
   distance_threshold = 5
@@ -18,6 +30,7 @@ def triangulate_points(state: State, current_R, current_t, K):
   mask = distances > distance_threshold
 
   possible_new_landmarks = np.sum(mask)
+  
 
   if possible_new_landmarks > 0:
     prev_poses = poses[:,:,mask]
@@ -40,6 +53,7 @@ def triangulate_points(state: State, current_R, current_t, K):
 
     points_3d = points_3d_homogeneous[:3,:] / points_3d_homogeneous[-1, :]
     # print(state.get_landmarks().shape)
+
     state.move_candidates_to_keypoints(selected_candidates, points_3d, ~mask)
     # print(state.get_landmarks().shape)
 

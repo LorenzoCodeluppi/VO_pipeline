@@ -10,7 +10,7 @@ def evaluate_new_candidates(tracked_keypoints, query_image):
   block_size = 4
   k_size = 5
   k = 0.04
-  threshold = 0.08
+  threshold = 0.04  #Best performance so far 
   min_distance = 10 # not sure about this
 
   corners = cv2.cornerHarris(query_image, blockSize=block_size, ksize=k_size, k=k)

@@ -16,3 +16,38 @@ def cross2Matrix(x):
                 [x[2],  0,  -x[0]],
                 [-x[1], x[0],  0]])
   return M
+
+def bearingvector(point, pose):
+  """ Bearing vector from camera pose to 2d point in camera frame
+    Computes the angle between two camera-image plane vector
+
+    Input:
+     - point np.ndarray(3,1) : vector
+     - pose np.ndattay(3,1) : vector
+
+    Output:
+
+     - bearing_vector np.ndarray(3,1) : vector
+   """
+  
+  v = point - pose / np.abs(point - pose)
+  return v
+
+
+
+def angle(v1,v2):
+  """ Angle between two vectors
+    Computes the angle between two vectors.
+
+    Input: 
+      - v1 np.ndarray(3,1) : first vector
+      - v2 np.ndarray(3,1) : second vector
+
+    Output: 
+      - angle float : angle between the two vectors
+  """
+  v1 = v1 / np.linalg.norm(v1)
+  v2 = v2 / np.linalg.norm(v2)
+  angle = np.arccos(np.dot(v1.T,v2))
+  angle = np.rad2deg(angle)
+  return angle
