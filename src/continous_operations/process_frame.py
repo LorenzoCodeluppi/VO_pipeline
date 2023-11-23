@@ -4,6 +4,7 @@ from .asociation import keypoint_association
 from .estimate_pose import estimate_pose
 from .evaluate_points import evaluate_new_candidates
 from .triangulate_candidates import triangulate_points
+from utils.utility_tools import calculate_inlier_ratio
 from structures import State
 
 def process_frame(state: State, database_image, query_image, K):
@@ -12,6 +13,9 @@ def process_frame(state: State, database_image, query_image, K):
 
   # 4.2 we estimate the pose using PnP and recover R and t matrices
   R, t, inlier_keypoints, inlier_landmarks  = estimate_pose(state, landmarks, keypoints, K)
+
+  triangulate_signal = calculate_inlier_ratio(state.get_keypoints(), inlier_keypoints, 0.5)
+
   state.update_state(inlier_keypoints.T, inlier_landmarks.T)
 
   # 4.3 we add new keypoints
@@ -26,7 +30,7 @@ def process_frame(state: State, database_image, query_image, K):
   state.update_camera_pose_candidates(np.tile(Mvec, (N,1)).T)
 
   # triangulate new points from candidates
-  triangulate_points(state, R, t, K)
+  triangulate_points(state, R, t, K, triangulate_signal)
 
   return -np.matmul(R.T, t)
   

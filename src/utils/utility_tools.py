@@ -51,3 +51,15 @@ def angle(v1,v2):
   angle = np.arccos(np.dot(v1.T,v2))
   angle = np.rad2deg(angle)
   return angle
+def calculate_inlier_ratio(previous_keypoints, inlier_keypoints, threshold):
+  number_current_keypoints = inlier_keypoints.shape[0]
+  number_previous_keypoints = previous_keypoints.shape[1]
+  keypoints_ratio = number_current_keypoints / number_previous_keypoints
+
+  triangulate_signal = keypoints_ratio < threshold
+  
+  return triangulate_signal
+
+def calculate_avarage_depth(landmarks, R, t):
+  position = -np.matmul(R.T, t)
+  return np.mean(landmarks[-1,:]) - position[-1]

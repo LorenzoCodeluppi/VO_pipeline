@@ -11,9 +11,9 @@ def keypoint_association(state: State, database_image, query_image, K):
   image_height, image_width = query_image.shape
   error_threshold = 5
 
-  lk_params = dict(winSize=(10, 10),
-    maxLevel=2,
-    criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 20, 0.03))
+  lk_params = dict(winSize=(15, 15),
+    maxLevel=3,
+    criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.01))
 
   next_keypoints, status, err = cv2.calcOpticalFlowPyrLK(
     database_image,
@@ -22,7 +22,7 @@ def keypoint_association(state: State, database_image, query_image, K):
     None,
     **lk_params
   )
-
+  # print(err)
   if candidates_points is not None:
     next_candidates_keypoints, candidates_status, candidates_err = cv2.calcOpticalFlowPyrLK(
       database_image,

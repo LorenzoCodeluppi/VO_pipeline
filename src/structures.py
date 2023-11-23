@@ -7,11 +7,11 @@ class Dataset(Enum):
   PARKING = 2
 
 class State():
-  keypoints = None
-  landmarks = None
-  candidates_points = None
-  first_obs_candidates = None
-  camera_pose_candidates = None
+  keypoints = None #2XN
+  landmarks = None #3XN
+  candidates_points = None #2XM
+  first_obs_candidates = None #2XM
+  camera_pose_candidates = None #12XM
 
   # only INLIERS
   def __init__(self, keypoints, landmarks):
@@ -61,6 +61,7 @@ class State():
     self.update_camera_pose_candidates(self.camera_pose_candidates[:,mask == 1], replace=True)
 
   def move_candidates_to_keypoints(self, new_keypoints, new_landmarks, filter_mask):
+    # print(new_landmarks)
     self.update_state(new_keypoints, new_landmarks, update=True)
     self.filter_out_candidates(self.get_candidates_points(), filter_mask)
     

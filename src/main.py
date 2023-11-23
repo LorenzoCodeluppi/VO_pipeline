@@ -122,7 +122,7 @@ def select_dataset(dataset: Dataset):
 
 
 if __name__ == "__main__":
-    dataset = Dataset.MALAGA
+    dataset = Dataset.KITTI
 
     bootstrap_frames = select_dataset(dataset)
 
