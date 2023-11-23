@@ -27,7 +27,7 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   T = poses_reshaped[:,-1,:] # 3xN
 
   # parameters to tune
-  distance_threshold = 2
+  distance_threshold = 1
 
   # calculate the distance between each poses to the current pose (t), if > than threshold select them
   distances = np.linalg.norm(T - current_t[:,None], axis=0)
@@ -43,10 +43,10 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   possible_new_landmarks = np.sum(mask)
   
   if possible_new_landmarks == 0 and triangulate_signal:
-    mask = distances >= np.max(distances)
+    mask = distances > np.mean(distances)
 
   if possible_new_landmarks > 0 or triangulate_signal:
-
+    print("Triangolazione")
     prev_poses = poses[:,mask]
     current_pose = np.hstack((current_R, current_t[:,None]))
     unique_poses = np.unique(prev_poses, axis = 1)
@@ -70,7 +70,7 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
         new_landmarks = np.concatenate((new_landmarks, points_3d), axis=1)
 
       filter_mask[indices] = False
-      
+    print(new_landmarks.shape)
     state.move_candidates_to_keypoints(candidates[:, ~filter_mask].astype(np.float32), new_landmarks, filter_mask)
  
 

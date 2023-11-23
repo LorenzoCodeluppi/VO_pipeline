@@ -7,11 +7,11 @@ from structures import State
 def evaluate_new_candidates(tracked_keypoints, query_image):
 
   # Harris parameters
-  block_size = 4
+  block_size = 7
   k_size = 5
   k = 0.04
-  threshold = 0.08
-  min_distance = 5 # not sure about this
+  threshold = 0.2
+  min_distance = 6 # not sure about this
 
   corners = cv2.cornerHarris(query_image, blockSize=block_size, ksize=k_size, k=k)
   _, corners_binary = cv2.threshold(corners, threshold * corners.max(), 255, 0)

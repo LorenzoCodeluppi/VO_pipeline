@@ -51,6 +51,7 @@ def angle(v1,v2):
   angle = np.arccos(np.dot(v1.T,v2))
   angle = np.rad2deg(angle)
   return angle
+
 def calculate_inlier_ratio(previous_keypoints, inlier_keypoints, threshold):
   number_current_keypoints = inlier_keypoints.shape[0]
   number_previous_keypoints = previous_keypoints.shape[1]
@@ -63,3 +64,9 @@ def calculate_inlier_ratio(previous_keypoints, inlier_keypoints, threshold):
 def calculate_avarage_depth(landmarks, R, t):
   position = -np.matmul(R.T, t)
   return np.mean(landmarks[-1,:]) - position[-1]
+
+def get_validation_mask(status, error, threshold):
+  if error is not None:
+    valid_keypoints_mask = error < threshold
+    return np.logical_and(valid_keypoints_mask, status)
+  return status

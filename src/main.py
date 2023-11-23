@@ -118,11 +118,11 @@ def select_dataset(dataset: Dataset):
     if dataset == dataset.KITTI:
         return [0, 3]
     if dataset == Dataset.MALAGA:
-        return [0, 2]
+        return [0, 3]
 
 
 if __name__ == "__main__":
-    dataset = Dataset.MALAGA
+    dataset = Dataset.KITTI
 
     bootstrap_frames = select_dataset(dataset)
 
