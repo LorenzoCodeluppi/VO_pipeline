@@ -73,6 +73,9 @@ def load_bootstrap_images(dataset, bootstrap_frames, images):
 def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_image, images, K):
     # Continuous operation
     trajectory = np.zeros((0, 3))
+    keypoints_history = np.zeros((0, 1))
+    candidates_history = np.zeros((0, 1))
+
     prev_img = database_image
 
     fig = plt.figure()
@@ -100,16 +103,18 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         t = process_frame(state, prev_img, image, K)
         # Update the trajectory array
         trajectory = np.vstack([trajectory, t])
+        keypoints_history = np.vstack([keypoints_history, state.get_keypoints().shape[1]])
+        candidates_history = np.vstack([candidates_history, state.get_candidates_points().shape[1]])
 
-        create_plot([ax1, ax2, ax3,ax4], image, state, trajectory,i)
+        create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history)
         plt.pause(0.01)
-        clear_plot([ax1, ax3])
+        clear_plot([ax1, ax3, ax4])
         prev_img = image
     
 # TODO: tune this
 def select_dataset(dataset: Dataset):
     if dataset == Dataset.PARKING:
-        return [0, 10]
+        return [5, 10]
     if dataset == dataset.KITTI:
         return [0, 3]
     if dataset == Dataset.MALAGA:
@@ -117,7 +122,7 @@ def select_dataset(dataset: Dataset):
 
 
 if __name__ == "__main__":
-    dataset = Dataset.MALAGA
+    dataset = Dataset.KITTI
 
     bootstrap_frames = select_dataset(dataset)
 

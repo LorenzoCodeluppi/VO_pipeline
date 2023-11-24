@@ -16,8 +16,8 @@ def process_frame(state: State, database_image, query_image, K):
   R, t, inlier_keypoints, inlier_landmarks  = estimate_pose(state, landmarks, keypoints, K)
 
   inlier_ratio = calculate_inlier_ratio(state.get_keypoints(), inlier_keypoints)
-  # print(inlier_landmarks.shape, inlier_ratio)
-  if inlier_landmarks.shape[0] < 30 or inlier_ratio < 0.5:
+
+  if inlier_landmarks.shape[0] < 100 or inlier_ratio < 0.5:
     triangulate_signal = True
 
   state.update_state(inlier_keypoints.T, inlier_landmarks.T)

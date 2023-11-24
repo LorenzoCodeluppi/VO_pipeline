@@ -20,8 +20,8 @@ def filter_triangulated_points(points_3d, M1, M2, K, candidates, first_obs_candi
   # Filter points based on the depth constraint and reprojection error threshold
   valid_points_mask = \
     (points_3d[2] > current_t[-1]) & \
-    (points_3d[2] < distance_threshold) & \
-    (reprojection_errors < np.mean(reprojection_errors))
+    (points_3d[2] < distance_threshold) \
+    # (reprojection_errors < np.mean(reprojection_errors))
 
   return valid_points_mask
 
@@ -47,7 +47,7 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   T = poses_reshaped[:,-1,:] # 3xN
 
   # parameters to tune
-  distance_threshold = 1
+  distance_threshold = 0.5
 
   # calculate the distance between each poses to the current pose (t), if > than threshold select them
   distances = np.linalg.norm(T - current_t[:,None], axis=0)
