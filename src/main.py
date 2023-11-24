@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from structures import Dataset
 from bootstrap.initialization import initialization
 from continous_operations.process_frame import process_frame
-from visualization_tools.plot_trajectory import plot_trajectory
+from visualization_tools.plot_trajectory import create_plot, clear_plot
 from structures import State
 
 ROOT_DIR = Path(__file__).parent.parent
@@ -73,12 +73,20 @@ def load_bootstrap_images(dataset, bootstrap_frames, images):
 def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_image, images, K):
     # Continuous operation
     trajectory = np.zeros((0, 3))
+    keypoints_history = np.zeros((0, 1))
+    candidates_history = np.zeros((0, 1))
+
     prev_img = database_image
 
-    f, axarr = plt.subplots(2,1)
-    f.set_figwidth(12)
-    f.set_figheight(7)
+    fig = plt.figure()
+    fig.set_figwidth(12)
+    fig.set_figheight(7)
 
+    gs = fig.add_gridspec(2,3)
+    ax1 = fig.add_subplot(gs[0,:])
+    ax2 = fig.add_subplot(gs[1, 0])
+    ax3 = fig.add_subplot(gs[1, 1])
+    ax4 = fig.add_subplot(gs[1, 2])
 
     for i in range(bootstrap_frames[1] + 1, last_frame + 1):
     # for i in range(bootstrap_frames[1] + 1, 35):
@@ -93,36 +101,28 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
             assert False
 
         t = process_frame(state, prev_img, image, K)
-
-        candidates_points = state.get_candidates_points()
-        keypoints = state.get_keypoints()
-        landmarks = state.get_landmarks()
-    
         # Update the trajectory array
         trajectory = np.vstack([trajectory, t])
+        keypoints_history = np.vstack([keypoints_history, state.get_keypoints().shape[1]])
+        candidates_history = np.vstack([candidates_history, state.get_candidates_points().shape[1]])
 
-        axarr[0].imshow(prev_img, cmap="gray")
-        axarr[0].scatter(candidates_points[0,:], candidates_points[1,:], s=1, c='red', marker='o')
-        axarr[0].scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
-
-        plot_trajectory(axarr[1], trajectory)
-        plt.pause(0.1)
-        axarr[0].clear()
-        
+        create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history)
+        plt.pause(0.01)
+        clear_plot([ax1, ax3, ax4])
         prev_img = image
     
 # TODO: tune this
 def select_dataset(dataset: Dataset):
     if dataset == Dataset.PARKING:
-        return [0, 5]
+        return [5, 10]
     if dataset == dataset.KITTI:
         return [0, 3]
     if dataset == Dataset.MALAGA:
-        return [0, 2]
+        return [0, 5]
 
 
 if __name__ == "__main__":
-    dataset = Dataset.MALAGA
+    dataset = Dataset.KITTI
 
     bootstrap_frames = select_dataset(dataset)
 
@@ -134,5 +134,7 @@ if __name__ == "__main__":
     state = initialization(frame1, frame2, K)
 
     run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K)
+
+    
 
     

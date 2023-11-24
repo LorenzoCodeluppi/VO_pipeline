@@ -50,7 +50,12 @@ def initialization(frame1, frame2, K) -> State:
    
     # Normalize homogeneous coordinates
     points_3d = points_3d_homogeneous[:3,:] / points_3d_homogeneous[-1,:]
- 
+
+    # filter landmark behind the camera
+    validation_mask = points_3d[2] > 0
+    points_3d = points_3d[:, validation_mask]
+    dst_pts = dst_pts[validation_mask]
+    
     # plot_point_cloud(points_3d, np.eye(3), t.flatten())
     # plot_feature_2D(points_3d, t.flatten())
 

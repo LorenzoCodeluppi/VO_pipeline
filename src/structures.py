@@ -7,11 +7,11 @@ class Dataset(Enum):
   PARKING = 2
 
 class State():
-  keypoints = None
-  landmarks = None
-  candidates_points = None
-  first_obs_candidates = None
-  camera_pose_candidates = None
+  keypoints = None #2XN
+  landmarks = None #3XN
+  candidates_points = None #2XM
+  first_obs_candidates = None #2XM
+  camera_pose_candidates = None #12XM
 
   # only INLIERS
   def __init__(self, keypoints, landmarks):

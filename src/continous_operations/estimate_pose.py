@@ -9,7 +9,7 @@ def estimate_pose(state: State, tracked_landmarks, tracked_keypoints, K):
 
   # PnP parameters
   reprojection_error = 1
-  confidence = 0.9999
+  confidence = 0.999
 
   # Use solvePnPRansac to estimate pose (R, t)
   _, rvec, tvec, inliers = cv2.solvePnPRansac(
