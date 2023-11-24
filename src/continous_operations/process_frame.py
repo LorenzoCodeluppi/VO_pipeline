@@ -8,13 +8,17 @@ from utils.utility_tools import calculate_inlier_ratio
 from structures import State
 
 def process_frame(state: State, database_image, query_image, K):
+  triangulate_signal = False
   # 4.1 we use KLT to track keypoints
   keypoints, landmarks = keypoint_association(state, database_image, query_image, K)
 
   # 4.2 we estimate the pose using PnP and recover R and t matrices
   R, t, inlier_keypoints, inlier_landmarks  = estimate_pose(state, landmarks, keypoints, K)
 
-  triangulate_signal = calculate_inlier_ratio(state.get_keypoints(), inlier_keypoints, 0.5)
+  inlier_ratio = calculate_inlier_ratio(state.get_keypoints(), inlier_keypoints)
+  # print(inlier_landmarks.shape, inlier_ratio)
+  if inlier_landmarks.shape[0] < 30 or inlier_ratio < 0.5:
+    triangulate_signal = True
 
   state.update_state(inlier_keypoints.T, inlier_landmarks.T)
 
