@@ -1,5 +1,6 @@
 import numpy as np
-
+from pathlib import Path
+import os 
 
 def cross2Matrix(x):
   """ Antisymmetric matrix corresponding to a 3-vector
@@ -68,3 +69,32 @@ def get_validation_mask(status, error, threshold):
     valid_keypoints_mask = error < threshold
     return np.logical_and(valid_keypoints_mask, status)
   return status
+
+def load_Kitti_GT():
+
+  ROOT_DIR = Path(__file__).parent.parent.parent  
+
+  data_folder_path = str(ROOT_DIR) + '/data/kitti/poses'
+
+  # Initialize an empty array to store poses
+  all_poses = []
+
+# Loop through each .txt file in the directory
+  for file_name in sorted(os.listdir(data_folder_path)):
+      if file_name.endswith(".txt"):
+          file_path = os.path.join(data_folder_path, file_name)
+        
+          # Load poses from the current file
+          poses = np.loadtxt(file_path)
+          
+          # Append the poses to the array
+          all_poses.append(poses)
+
+  # Concatenate all loaded poses into a single array
+  all_poses_array = np.concatenate(all_poses, axis=0)
+  
+  # Extract the first three columns of the array
+  # all_poses_array = all_poses_array[:, :3]
+  
+ 
+  return  all_poses_array

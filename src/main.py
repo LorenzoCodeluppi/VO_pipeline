@@ -79,10 +79,11 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
     fig.set_figwidth(12)
     fig.set_figheight(7)
 
-    gs = fig.add_gridspec(2,2)
+    gs = fig.add_gridspec(2,3)
     ax1 = fig.add_subplot(gs[0,:])
     ax2 = fig.add_subplot(gs[1, 0])
     ax3 = fig.add_subplot(gs[1, 1])
+    ax4 = fig.add_subplot(gs[1, 2])
 
     for i in range(bootstrap_frames[1] + 1, last_frame + 1):
     # for i in range(bootstrap_frames[1] + 1, 35):
@@ -100,8 +101,8 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         # Update the trajectory array
         trajectory = np.vstack([trajectory, t])
 
-        create_plot([ax1, ax2, ax3], image, state, trajectory)
-        plt.pause(0.1)
+        create_plot([ax1, ax2, ax3,ax4], image, state, trajectory,i)
+        plt.pause(0.01)
         clear_plot([ax1, ax3])
         prev_img = image
     
@@ -116,7 +117,7 @@ def select_dataset(dataset: Dataset):
 
 
 if __name__ == "__main__":
-    dataset = Dataset.PARKING
+    dataset = Dataset.MALAGA
 
     bootstrap_frames = select_dataset(dataset)
 
@@ -128,5 +129,7 @@ if __name__ == "__main__":
     state = initialization(frame1, frame2, K)
 
     run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K)
+
+    
 
     

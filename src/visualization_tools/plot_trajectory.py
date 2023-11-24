@@ -1,14 +1,30 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
-def plot_trajectory(ax, trajectory):
+from structures import Dataset
+from utils.utility_tools import load_Kitti_GT
+def plot_trajectory(ax, trajectory,dataset, i):
     
     ax.set_title('Global Trajectory')
+
+    if dataset == Dataset.KITTI:
+        ground_truth_trajectory= load_Kitti_GT()
+        ground_truth = ground_truth_trajectory.reshape(-1,3,4)
+        
+        ground_truth_x = ground_truth[i,0,3]
+        ground_truth_z = ground_truth[i,2,3]
+       
+    
+        # Plot ground truth trajectory
+        ax.plot(ground_truth_x, ground_truth_z, marker='o', markersize=1, color="blue", label="Ground Truth")
+
+
 
     # Extract x and z coordinates from the trajectory
     x = trajectory[:, 0]
     z = trajectory[:, 2]
 
+    
+    # Plot estimated trajectory
     ax.plot(x, z, marker='o', markersize=1, color="black")
 
 def plot_local_trajectory(ax, trajectory, landmarks = None, restrict_view = True):
@@ -32,20 +48,33 @@ def plot_local_trajectory(ax, trajectory, landmarks = None, restrict_view = True
 
     ax.plot(x, z, marker='x', markersize=3, color="blue")
 
+def plot_cand(ax,state,i):
+    # Add a subplot for the number of candidates and keypoints
+    num_candidates = len(state.get_candidates_points()[1])
+    num_keypoints = len(state.get_keypoints()[1])
+    ax.plot(i,num_candidates, marker='x',markersize = 2, color='red')
+    ax.plot(i,num_keypoints, marker='x', markersize = 2, color='green')
+    ax.set_title('Number of Candidates and Keypoints')
+    ax.set_xlabel('Frame')
+    ax.legend(['Candidates', 'Keypoints'])
+
 
 def plot_image(ax, image, keypoints, candidates):
     ax.imshow(image, cmap="gray")
     ax.scatter(candidates[0,:], candidates[1,:], s=1, c='red', marker='o')
     ax.scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
 
-def create_plot(axis_arr, image, state, trajectory):
+def create_plot(axis_arr, image, state, trajectory,i):
     for idx, ax in enumerate(axis_arr):
         if idx == 0:
             plot_image(ax, image, state.get_keypoints(), state.get_candidates_points())
         elif idx == 1:
-            plot_trajectory(ax, trajectory)
+            plot_trajectory(ax, trajectory,None,i)
         elif idx == 2:
             plot_local_trajectory(ax, trajectory, state.get_landmarks())
+        elif idx == 3:
+            plot_cand(ax, state,i)
+
 
 def clear_plot(axis_arr):
     for ax in axis_arr:
