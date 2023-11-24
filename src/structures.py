@@ -61,7 +61,6 @@ class State():
     self.update_camera_pose_candidates(self.camera_pose_candidates[:,mask == 1], replace=True)
 
   def move_candidates_to_keypoints(self, new_keypoints, new_landmarks, filter_mask):
-    # print(new_landmarks)
     self.update_state(new_keypoints, new_landmarks, update=True)
     self.filter_out_candidates(self.get_candidates_points(), filter_mask)
     
