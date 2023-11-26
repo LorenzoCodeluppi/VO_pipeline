@@ -13,7 +13,7 @@ def keypoint_association(state: State, database_image, query_image, K):
 
   lk_params = dict(winSize=(15, 15),
     maxLevel=2,
-    criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+    criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.001))
 
   next_keypoints, keypoints_status, keypoints_err = cv2.calcOpticalFlowPyrLK(
     database_image,

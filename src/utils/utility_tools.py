@@ -18,22 +18,62 @@ def cross2Matrix(x):
                 [-x[1], x[0],  0]])
   return M
 
-def bearingvector(point, pose):
-  """ Bearing vector from camera pose to 2d point in camera frame
-    Computes the angle between two camera-image plane vector
+def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
+    """ Calculate the angle between bearing vectors in the world frame.
 
-    Input:
-     - point np.ndarray(3,1) : vector
-     - pose np.ndattay(3,1) : vector
+    Inputs:
+     - current_points: np.ndarray(3, N) - 3D points in the current frame
+     - prev_points: np.ndarray(3, N) - 3D points in the previous frame
+     - poses: np.ndarray(3, 4, M) - Camera poses for M frames
+     - current_pose: np.ndarray(3, 4) - Camera pose for the current frame
+     - K: np.ndarray(3, 3) - Camera intrinsic matrix
 
     Output:
-
-     - bearing_vector np.ndarray(3,1) : vector
+     - angles_degrees: np.ndarray(N,) - Angles between corresponding vectors in degrees
    """
-  
-  v = point - pose / np.abs(point - pose)
-  return v
 
+    # Inverse camera intrinsic matrix
+    K_inv = np.linalg.inv(K)
+
+    # Extract translation and rotation matrices from poses
+    T_prev = poses[:, -1, :]
+    R_prev = poses[:, :3, :]
+
+    t = current_pose[:, -1]
+    R = current_pose[:, :3]
+
+    # Homogeneous coordinates and normalization
+    current_points_homo = np.vstack((current_points, np.ones((1, current_points.shape[1]))))
+    prev_points_homo = np.vstack((prev_points, np.ones((1, prev_points.shape[1]))))
+
+    normalized_current_pts = K_inv @ current_points_homo
+    normalized_prev_pts = K_inv @ prev_points_homo
+
+    # # Calculate bearing vectors in the camera frame
+    bearing_current_cam = (R.T @ normalized_current_pts) + (R @ t)[:, None]
+    bearing_prev_cam = np.zeros((3, current_points.shape[1]))
+
+    for i in range(current_points.shape[1]):
+        bearing_prev_cam[:, i] = (R_prev[:, :, i].T @ normalized_prev_pts[:, i]) - (R_prev[:, :, i] @ T_prev[:, i])
+
+    # Calculate dot products and magnitudes
+    dot_products = np.sum(normalized_current_pts * bearing_prev_cam, axis=0)
+    magnitude_current = np.linalg.norm(normalized_current_pts, axis=0)
+    magnitude_prev = np.linalg.norm(bearing_prev_cam, axis=0)
+
+    # Calculate the cosine of the angles
+    cosine_of_angles = dot_products / (magnitude_current * magnitude_prev)
+
+    # Ensure the values are within the valid range [-1, 1]
+    cosine_of_angles = np.clip(cosine_of_angles, -1.0, 1.0)
+
+    # Calculate the angles in radians
+    angles_radians = np.arccos(cosine_of_angles)
+
+    # Convert the angles to degrees
+    angles_degrees = np.degrees(angles_radians)
+    print(np.max(angles_degrees))
+    return angles_degrees
 
 
 def angle(v1,v2):
@@ -95,6 +135,11 @@ def load_Kitti_GT():
   
   # Extract the first three columns of the array
   # all_poses_array = all_poses_array[:, :3]
-  
- 
   return  all_poses_array
+
+
+def get_landmark_treshold(points_3d, distance_threshold_factor):
+  average = abs(np.mean(points_3d))
+  std = abs(np.std(points_3d))
+  distance_threshold = average + distance_threshold_factor * std
+  return distance_threshold
