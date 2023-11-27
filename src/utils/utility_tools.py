@@ -75,7 +75,7 @@ def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
       bearing_prev_cam[:, i] = (R_prev[:, :, i].T @ normalized_prev_pts[:, i]) + (R_prev[:, :, i].T @ T_prev[:, 0])
 
     # print("candidates", prev_points.shape)
-    show_bearings(bearing_current_cam, bearing_prev_cam, t, T_prev[:, 0])
+    # show_bearings(bearing_current_cam, bearing_prev_cam, t, T_prev[:, 0])
     
     # Calculate dot products and magnitudes
     dot_products = np.sum(normalized_current_pts * bearing_prev_cam, axis=0)
@@ -137,25 +137,8 @@ def load_Kitti_GT():
 
   data_folder_path = str(ROOT_DIR) + '/data/kitti/poses'
 
-  # Initialize an empty array to store poses
-  all_poses = []
+  all_poses_array = np.loadtxt(f"{data_folder_path}/05.txt")
 
-# Loop through each .txt file in the directory
-  for file_name in sorted(os.listdir(data_folder_path)):
-      if file_name.endswith(".txt"):
-          file_path = os.path.join(data_folder_path, file_name)
-        
-          # Load poses from the current file
-          poses = np.loadtxt(file_path)
-          
-          # Append the poses to the array
-          all_poses.append(poses)
-
-  # Concatenate all loaded poses into a single array
-  all_poses_array = np.concatenate(all_poses, axis=0)
-  
-  # Extract the first three columns of the array
-  # all_poses_array = all_poses_array[:, :3]
   return  all_poses_array
 
 
