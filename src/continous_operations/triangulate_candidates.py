@@ -29,7 +29,7 @@ def filter_triangulated_points(points_3d, M1, M2, K, candidates, first_obs_candi
 def triangulate_points(state: State, current_R, current_t, K, triangulate_signal):
   # parameters to tune
   distance_threshold = 1
-  angle_treshold = 10
+  angle_treshold = 3
 
   current_pose = np.hstack((current_R, current_t[:,None]))
 
@@ -41,6 +41,7 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   T = poses_reshaped[:,-1,:] # 3xN
   
   angles = get_angle_bearing(candidates, first_obs_candidates, poses_reshaped, current_pose, K)
+
   # calculate the distance between each poses to the current pose (t), if > than threshold select them
   distances = np.linalg.norm(T - current_t[:,None], axis=0)
   max_distance = np.max(distances)
@@ -50,8 +51,7 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   if max_distance / average_depth > 0.1:
     triangulate_signal = True
 
-  mask = distances > distance_threshold
-  # mask = np.logical_or(distances > distance_threshold, angles > angle_treshold)
+  mask = np.logical_or(distances > distance_threshold, angles > angle_treshold)
   # print(np.sum(angles > angle_treshold))
   possible_new_landmarks = np.sum(mask)
   
