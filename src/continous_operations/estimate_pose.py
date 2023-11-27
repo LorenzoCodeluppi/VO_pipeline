@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+import params_loader as pl
 from structures import State
 
 def estimate_pose(state: State, tracked_landmarks, tracked_keypoints, K):
@@ -8,8 +9,8 @@ def estimate_pose(state: State, tracked_landmarks, tracked_keypoints, K):
   assert tracked_keypoints.shape[1] == 2, "Keypoints should be in 2D (N, 2)"
 
   # PnP parameters
-  reprojection_error = 1
-  confidence = 0.999
+  reprojection_error = pl.params["reprojection_error"]
+  confidence = pl.params["pnp_confidence_"]
 
   # Use solvePnPRansac to estimate pose (R, t)
   _, rvec, tvec, inliers = cv2.solvePnPRansac(

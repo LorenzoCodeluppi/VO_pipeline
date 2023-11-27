@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+import params_loader as pl
 from utils.utility_tools import calculate_avarage_depth
 from structures import State
 from utils import utility_tools as utils
@@ -47,7 +48,8 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   T = poses_reshaped[:,-1,:] # 3xN
 
   # parameters to tune
-  distance_threshold = 0.5
+  distance_threshold = pl.params["distance_threshold"]
+  thumb_rule = pl.params["thumb_rule"]
 
   # calculate the distance between each poses to the current pose (t), if > than threshold select them
   distances = np.linalg.norm(T - current_t[:,None], axis=0)
@@ -55,7 +57,7 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
 
   average_depth = calculate_avarage_depth(landmarks, current_R, current_t)
   
-  if max_distance / average_depth > 0.1:
+  if max_distance / average_depth > thumb_rule:
     triangulate_signal = True
 
   mask = distances > distance_threshold

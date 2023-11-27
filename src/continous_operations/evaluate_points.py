@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+import params_loader as pl
 from structures import State
 
 def selectKeypoints(scores, num, r):
@@ -23,12 +24,12 @@ def selectKeypoints(scores, num, r):
 def evaluate_new_candidates(tracked_keypoints, query_image):
 
   # Harris parameters
-  block_size = 7
-  k_size = 5
-  k = 0.04
-  num_corners = 400
-  suppression_radius = 7
-  min_distance = 8 # not sure about this
+  block_size = pl.params["block_size"]
+  k_size = pl.params["k_size"]
+  k = pl.params["k"]
+  num_corners = pl.params["num_corners"]
+  suppression_radius = pl.params["suppression_radius"]
+  min_distance = pl.params["min_distance"] # not sure about this
 
   corners = cv2.cornerHarris(query_image, blockSize=block_size, ksize=k_size, k=k)
   # _, corners_binary = cv2.threshold(corners, 0.2 * corners.max(), 255, 0)

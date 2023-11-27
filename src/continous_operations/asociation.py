@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+import params_loader as pl
 from utils.utility_tools import get_validation_mask
 from structures import State
 
@@ -9,11 +10,15 @@ def keypoint_association(state: State, database_image, query_image, K):
   previous_keypoints = state.get_keypoints()
   landmarks = state.get_landmarks()
   candidates_points = state.get_candidates_points()
-  error_threshold = 10
 
-  lk_params = dict(winSize=(15, 15),
-    maxLevel=2,
-    criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+  error_threshold = pl.params["error_threshold"]
+  win_size = pl.params["winSize"]
+  max_level = pl.params["maxLevel"]
+  criteria = pl.params["criteria"]
+
+  lk_params = dict(winSize=win_size,
+    maxLevel=max_level,
+    criteria=criteria)
 
   next_keypoints, keypoints_status, keypoints_err = cv2.calcOpticalFlowPyrLK(
     database_image,

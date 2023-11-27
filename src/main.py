@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+import params_loader as pl
 from structures import Dataset
 from bootstrap.initialization import initialization
 from continous_operations.process_frame import process_frame
@@ -110,21 +111,13 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         plt.pause(0.01)
         clear_plot([ax1, ax3, ax4])
         prev_img = image
-    
-# TODO: tune this
-def select_dataset(dataset: Dataset):
-    if dataset == Dataset.PARKING:
-        return [5, 10]
-    if dataset == dataset.KITTI:
-        return [0, 3]
-    if dataset == Dataset.MALAGA:
-        return [0, 5]
-
 
 if __name__ == "__main__":
-    dataset = Dataset.KITTI
+    dataset = Dataset.PARKING
+    
+    pl.load_parameters(dataset)
 
-    bootstrap_frames = select_dataset(dataset)
+    bootstrap_frames = pl.params["bootstrap_frames"]
 
     K, images, last_frame = load_dataset(dataset)
 
