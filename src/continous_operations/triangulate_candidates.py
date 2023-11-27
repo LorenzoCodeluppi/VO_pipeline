@@ -40,7 +40,7 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   poses_reshaped = poses.reshape(3,4, candidates.shape[1])
   T = poses_reshaped[:,-1,:] # 3xN
   
-  # angles = get_angle_bearing(candidates, first_obs_candidates, poses_reshaped, current_pose, K)
+  angles = get_angle_bearing(candidates, first_obs_candidates, poses_reshaped, current_pose, K)
   # calculate the distance between each poses to the current pose (t), if > than threshold select them
   distances = np.linalg.norm(T - current_t[:,None], axis=0)
   max_distance = np.max(distances)

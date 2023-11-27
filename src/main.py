@@ -78,15 +78,15 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
 
     prev_img = database_image
 
-    fig = plt.figure()
-    fig.set_figwidth(12)
-    fig.set_figheight(7)
+    # fig = plt.figure()
+    # fig.set_figwidth(12)
+    # fig.set_figheight(7)
 
-    gs = fig.add_gridspec(2,3)
-    ax1 = fig.add_subplot(gs[0,:])
-    ax2 = fig.add_subplot(gs[1, 0])
-    ax3 = fig.add_subplot(gs[1, 1])
-    ax4 = fig.add_subplot(gs[1, 2])
+    # gs = fig.add_gridspec(2,3)
+    # ax1 = fig.add_subplot(gs[0,:])
+    # ax2 = fig.add_subplot(gs[1, 0])
+    # ax3 = fig.add_subplot(gs[1, 1])
+    # ax4 = fig.add_subplot(gs[1, 2])
 
     for i in range(bootstrap_frames[1] + 1, last_frame + 1):
     # for i in range(bootstrap_frames[1] + 1, 35):
@@ -106,9 +106,9 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         keypoints_history = np.vstack([keypoints_history, state.get_keypoints().shape[1]])
         candidates_history = np.vstack([candidates_history, state.get_candidates_points().shape[1]])
 
-        create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history)
-        plt.pause(0.01)
-        clear_plot([ax1, ax3, ax4])
+        # create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history)
+        # plt.pause(0.01)
+        # clear_plot([ax1, ax3, ax4])
         prev_img = image
     
 # TODO: tune this

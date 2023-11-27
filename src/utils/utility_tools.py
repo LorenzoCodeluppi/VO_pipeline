@@ -1,6 +1,7 @@
-import numpy as np
+import os
 from pathlib import Path
-import os 
+import matplotlib.pyplot as plt
+import numpy as np
 
 def cross2Matrix(x):
   """ Antisymmetric matrix corresponding to a 3-vector
@@ -17,6 +18,23 @@ def cross2Matrix(x):
                 [x[2],  0,  -x[0]],
                 [-x[1], x[0],  0]])
   return M
+
+
+def show_bearings(bearing_current_cam, bearing_prev_cam, current_pose, prev_pose):
+  current_pose = current_pose.flatten()
+
+  x1 = [current_pose[0], bearing_current_cam[0,-1]]
+  z1 = [current_pose[2], bearing_current_cam[2,-1]]
+
+  x2 = [prev_pose[0], bearing_prev_cam[0, -1]]
+  z2 = [prev_pose[2], bearing_prev_cam[2, -1]]
+
+  print(current_pose)
+  plt.plot(x1, z1, c='blue')
+  plt.plot(x2, z2, c='red')
+  plt.show()
+  # plt.pause(1)
+  # plt.clf()
 
 def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
     """ Calculate the angle between bearing vectors in the world frame.
@@ -48,14 +66,17 @@ def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
 
     normalized_current_pts = K_inv @ current_points_homo
     normalized_prev_pts = K_inv @ prev_points_homo
-
+    
     # # Calculate bearing vectors in the camera frame
-    bearing_current_cam = (R.T @ normalized_current_pts) + (R @ t)[:, None]
+    bearing_current_cam = (R.T @ normalized_current_pts) + (R.T @ t)[:, None]
     bearing_prev_cam = np.zeros((3, current_points.shape[1]))
 
     for i in range(current_points.shape[1]):
-        bearing_prev_cam[:, i] = (R_prev[:, :, i].T @ normalized_prev_pts[:, i]) - (R_prev[:, :, i] @ T_prev[:, i])
+      bearing_prev_cam[:, i] = (R_prev[:, :, i].T @ normalized_prev_pts[:, i]) + (R_prev[:, :, i].T @ T_prev[:, 0])
 
+    # print("candidates", prev_points.shape)
+    show_bearings(bearing_current_cam, bearing_prev_cam, t, T_prev[:, 0])
+    
     # Calculate dot products and magnitudes
     dot_products = np.sum(normalized_current_pts * bearing_prev_cam, axis=0)
     magnitude_current = np.linalg.norm(normalized_current_pts, axis=0)
@@ -72,7 +93,7 @@ def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
 
     # Convert the angles to degrees
     angles_degrees = np.degrees(angles_radians)
-    print(np.max(angles_degrees))
+    # print(np.max(angles_degrees))
     return angles_degrees
 
 
