@@ -46,7 +46,7 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   thumb_rule = pl.params["thumb_rule"]
 
   
-  # angles = get_angle_bearing(candidates, first_obs_candidates, poses_reshaped, current_pose, K)
+  angles = get_angle_bearing(candidates, first_obs_candidates, poses_reshaped, current_pose, K)
   # calculate the distance between each poses to the current pose (t), if > than threshold select them
   distances = np.linalg.norm(T - current_t[:,None], axis=0)
   max_distance = np.max(distances)
