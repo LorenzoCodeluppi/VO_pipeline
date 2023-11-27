@@ -11,8 +11,8 @@ def plot_trajectory(ax, trajectory,dataset, frame_idx):
         ground_truth_trajectory= load_Kitti_GT()
         ground_truth = ground_truth_trajectory.reshape(-1,3,4)
         
-        ground_truth_x = ground_truth[i,0,3]
-        ground_truth_z = ground_truth[i,2,3]
+        ground_truth_x = ground_truth[frame_idx,0,3]
+        ground_truth_z = ground_truth[frame_idx,2,3]
        
         # Plot ground truth trajectory
         ax.plot(ground_truth_x, ground_truth_z, marker='o', markersize=1, color="blue", label="Ground Truth")
@@ -66,7 +66,7 @@ def create_plot(axis_arr, image, state, trajectory, frame_idx, keypoint_history,
         if idx == 0:
             plot_image(ax, image, state.get_keypoints(), state.get_candidates_points())
         elif idx == 1:
-            plot_trajectory(ax, trajectory, None, frame_idx)
+            plot_trajectory(ax, trajectory,Dataset.KITTI, frame_idx)
         elif idx == 2:
             plot_local_trajectory(ax, trajectory, state.get_landmarks())
         elif idx == 3:
