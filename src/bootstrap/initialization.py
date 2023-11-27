@@ -28,10 +28,10 @@ def show_bearings(current_points, prev_points, R, t, K):
 
     # print(prev_points[0], current_points[0])
     # print(bearing_prev_cam[:,0], bearing_current_cam[:,0])
-    print(bearing_current_cam[:,0])
-    plt.plot(x1, z1, c='blue')
-    plt.plot(x2, z2, c='red')
-    plt.show()
+    # print(bearing_current_cam[:,0])
+    # plt.plot(x1, z1, c='blue')
+    # plt.plot(x2, z2, c='red')
+    # plt.show()
     # plt.pause(1)
     # plt.clf()
 

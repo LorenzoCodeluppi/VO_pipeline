@@ -11,8 +11,8 @@ def keypoint_association(state: State, database_image, query_image, K):
   candidates_points = state.get_candidates_points()
   error_threshold = 10
 
-  lk_params = dict(winSize=(15, 15),
-    maxLevel=2,
+  lk_params = dict(winSize=(31, 31),
+    maxLevel=3,
     criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.001))
 
   next_keypoints, keypoints_status, keypoints_err = cv2.calcOpticalFlowPyrLK(
