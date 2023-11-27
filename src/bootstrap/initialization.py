@@ -1,17 +1,19 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+
+import params_loader as pl
 from structures import State
 from visualization_tools.point_cloud import plot_point_cloud, plot_feature_2D
 from visualization_tools.plot_matches import plot_matched_points, plot_matched_points_with_lines
 
 def initialization(frame1, frame2, K) -> State:
     # SIFT tunable parameters
-    match_per_descriptor = 2
-    match_treshold = 0.8
+    match_per_descriptor = pl.params["match_per_descriptor"]
+    match_treshold = pl.params["match_treshold"]
     # RANSAC tunable parameters
-    repojection_error_tollerance = 0.9 # in pixels
-    confidence = 0.9999
+    repojection_error_tollerance = pl.params["repojection_error_tollerance"]
+    confidence = pl.params["p5p_confidence"] 
 
     # SIFT feature detector
     sift = cv2.SIFT_create()

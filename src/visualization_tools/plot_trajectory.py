@@ -36,15 +36,14 @@ def plot_local_trajectory(ax, trajectory, landmarks = None, restrict_view = True
     if landmarks is not None:
         ax.scatter(landmarks[0,:], landmarks[2,:], s=10, c='black', marker='x')
 
-    # if restrict_view:
-    #     x_range = max(x) - min(x)
-    #     z_range = max(z) - min(z)
-    #     x_limit = max(x) + x_range * 10
-    #     z_limit = max(z) + z_range * 10
-    #     ax.set_xlim(-200, 200)
-    #     ax.set_ylim(-200, 200)
-
-    ax.plot(x, z, marker='x', markersize=3, color="blue")
+    if restrict_view:
+        offset = 10
+        x_min, x_max = min(x), max(x)
+        z_min, z_max = min(z), max(z)
+        ax.set_xlim(-offset + x_min, x_max + offset)
+        ax.set_ylim(z_min, z_max + offset)
+    
+    ax.plot(x, z, marker='x', markersize=3, color="blue", scalex= False, scaley = False)
 
 def plot_cand(ax, state, keypoint_history, candidates_history):
     # Add a subplot for the number of candidates and keypoints
