@@ -41,4 +41,3 @@ def process_frame(state: State, database_image, query_image, K):
   triangulate_points(state, R, t, K, triangulate_signal)
 
   return -np.matmul(R.T, t)
-  
