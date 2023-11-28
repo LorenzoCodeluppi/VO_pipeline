@@ -24,7 +24,7 @@ def load_dataset(dataset):
         # need to set kitti_path to folder containing "05" and "poses"
         assert 'kitti_path' in globals(), "kitti_path not defined"
         ground_truth = np.loadtxt(f"{kitti_path}/poses/05.txt")
-        ground_truth = ground_truth[:, [8, 9]]
+        ground_truth = ground_truth[:, [3, 11]]
         last_frame = 2760
         K = np.array([[7.188560000000e+02, 0, 6.071928000000e+02],
                     [0, 7.188560000000e+02, 1.852157000000e+02],
@@ -50,9 +50,12 @@ def load_dataset(dataset):
         K = np.loadtxt(f"{parking_path}/K.txt", delimiter=',', usecols=[0,1,2])
 
         ground_truth = np.loadtxt(f"{parking_path}/poses.txt")
-        ground_truth = ground_truth[:, [8, 9]]
+        ground_truth = ground_truth[:, [3, 11]]
     else:
         assert False
+    
+    if dataset == Dataset.KITTI or dataset == Dataset.PARKING:
+        return K, images, last_frame , ground_truth
     
     return K, images, last_frame
 
@@ -71,7 +74,7 @@ def load_bootstrap_images(dataset, bootstrap_frames, images):
     
     return img0, img1
 
-def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_image, images, K, perf_boost):
+def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_image, images, K, perf_boost, ground_truth = None):
     # Continuous operation
     trajectory = np.zeros((0, 3))
     keypoints_history = np.zeros((0, 1))
@@ -112,7 +115,10 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
             keypoints_history = np.vstack([keypoints_history, state.get_keypoints().shape[1]])
             candidates_history = np.vstack([candidates_history, state.get_candidates_points().shape[1]])
 
-        create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history, perf_boost)
+        if ground_truth is not None:
+            create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history,perf_boost, ground_truth)
+        else:
+            create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history,perf_boost)
         plt.pause(0.01)
         clear_plot([ax1, ax3, ax4])
         prev_img = image
@@ -125,15 +131,20 @@ if __name__ == "__main__":
 
     bootstrap_frames = pl.params["bootstrap_frames"]
 
-    K, images, last_frame = load_dataset(dataset)
+    if dataset == Dataset.KITTI or dataset == Dataset.PARKING:
+        K, images, last_frame, ground_truth = load_dataset(dataset)
+    else:
+        K, images, last_frame = load_dataset(dataset)
 
     frame1, frame2 = load_bootstrap_images(dataset, bootstrap_frames, images)
 
     # TODO: check the implementation
     state = initialization(frame1, frame2, K)
 
-    run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster)
+    if dataset == Dataset.KITTI or dataset == Dataset.PARKING:
+        run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster,ground_truth)
+    else: 
+        run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster)
 
     
 
-    

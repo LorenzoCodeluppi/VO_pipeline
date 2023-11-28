@@ -49,5 +49,4 @@ def keypoint_association(state: State, database_image, query_image, K):
   tracked_landmarks = landmarks[:, keypoints_mask.flatten() == 1]
 
   return tracked_keypoints, tracked_landmarks.T
-  
-  
+

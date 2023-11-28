@@ -1,6 +1,7 @@
-import numpy as np
+import os
 from pathlib import Path
-import os 
+import matplotlib.pyplot as plt
+import numpy as np
 
 def cross2Matrix(x):
   """ Antisymmetric matrix corresponding to a 3-vector
@@ -18,46 +19,87 @@ def cross2Matrix(x):
                 [-x[1], x[0],  0]])
   return M
 
-def bearingvector(point, pose):
-  """ Bearing vector from camera pose to 2d point in camera frame
-    Computes the angle between two camera-image plane vector
 
-    Input:
-     - point np.ndarray(3,1) : vector
-     - pose np.ndattay(3,1) : vector
+def show_bearings(bearing_current_cam, bearing_prev_cam, current_pose, prev_pose):
+  current_pose = current_pose.flatten()
+
+  x1 = [current_pose[0], bearing_current_cam[0,-1]]
+  z1 = [current_pose[2], bearing_current_cam[2,-1]]
+
+  x2 = [prev_pose[0], bearing_prev_cam[0, -1]]
+  z2 = [prev_pose[2], bearing_prev_cam[2, -1]]
+
+  print(current_pose)
+  plt.plot(x1, z1, c='blue')
+  plt.plot(x2, z2, c='red')
+  plt.show()
+  # plt.pause(1)
+  # plt.clf()
+
+
+def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
+    """ Calculate the angle between bearing vectors in the world frame.
+
+    Inputs:
+     - current_points: np.ndarray(2, N) - 2D points in the current frame
+     - prev_points: np.ndarray(2, N) - 2D points in the previous frame
+     - poses: np.ndarray(3, 4, M) - Camera poses for M frames
+     - current_pose: np.ndarray(3, 4) - Camera pose for the current frame
+     - K: np.ndarray(3, 3) - Camera intrinsic matrix
 
     Output:
-
-     - bearing_vector np.ndarray(3,1) : vector
+     - angles_degrees: np.ndarray(N,) - Angles between corresponding vectors in degrees
    """
-  
-  v = point - pose / np.abs(point - pose)
-  return v
 
+    poses = np.reshape(poses, (12, poses.shape[2])).T
+    num_points = prev_points.shape[1]
+    K_inv = np.linalg.inv(K)
 
+    # Get Rotation matrix of current pose
+    R_current = current_pose[:3, :3].T
 
-def angle(v1,v2):
-  """ Angle between two vectors
-    Computes the angle between two vectors.
+    # Convert points to homogeneous coordinates
+    current_points_homogeneous = np.vstack((current_points, np.ones((1, num_points))))
+    prev_points_homogeneous = np.vstack((prev_points, np.ones((1, num_points))))
 
-    Input: 
-      - v1 np.ndarray(3,1) : first vector
-      - v2 np.ndarray(3,1) : second vector
+    # Get 3D points (assuming lambda = 1)
+    current_points_3D = K_inv @ current_points_homogeneous
+    prev_points_3D = K_inv @ prev_points_homogeneous
 
-    Output: 
-      - angle float : angle between the two vectors
-  """
-  v1 = v1 / np.linalg.norm(v1)
-  v2 = v2 / np.linalg.norm(v2)
-  angle = np.arccos(np.dot(v1.T,v2))
-  angle = np.rad2deg(angle)
-  return angle
+    angles = np.zeros(num_points)
+
+    for i in range(num_points):
+        # Get R and t matrices of previous pose
+        t_prev = poses[i, :].reshape((3, 4))
+        R_prev = t_prev[:3, :3].T
+
+        # De-rotate previous point to current camera frame
+        deRotation = R_prev.T @ R_current
+        deRotated_prev_point_3D = deRotation @ prev_points_3D[:, i]
+
+        # Calculate dot product and magnitudes product
+        dot_product = np.dot(current_points_3D[:, i], deRotated_prev_point_3D)
+        magnitudes_product = np.linalg.norm(current_points_3D[:, i]) * np.linalg.norm(deRotated_prev_point_3D)
+
+        # Calculate cosine of angle
+        cos_of_angle = dot_product / magnitudes_product
+
+        # Ensure the values are within the valid range [-1, 1]
+        cos_of_angle = np.clip(cos_of_angle, -1, 1)
+
+        # Compute angle
+        angles[i] = np.arccos(cos_of_angle)
+
+    angles_degrees = np.degrees(angles)
+
+    return angles_degrees
+
 
 def calculate_inlier_ratio(previous_keypoints, inlier_keypoints):
   number_current_keypoints = inlier_keypoints.shape[0]
   number_previous_keypoints = previous_keypoints.shape[1]
   keypoints_ratio = number_current_keypoints / number_previous_keypoints
-  
+
   return keypoints_ratio
 
 def calculate_avarage_depth(landmarks, R, t):
@@ -72,29 +114,17 @@ def get_validation_mask(status, error, threshold):
 
 def load_Kitti_GT():
 
-  ROOT_DIR = Path(__file__).parent.parent.parent  
+  ROOT_DIR = Path(__file__).parent.parent.parent
 
   data_folder_path = str(ROOT_DIR) + '/data/kitti/poses'
 
-  # Initialize an empty array to store poses
-  all_poses = []
+  all_poses_array = np.loadtxt(f"{data_folder_path}/05.txt")
 
-# Loop through each .txt file in the directory
-  for file_name in sorted(os.listdir(data_folder_path)):
-      if file_name.endswith(".txt"):
-          file_path = os.path.join(data_folder_path, file_name)
-        
-          # Load poses from the current file
-          poses = np.loadtxt(file_path)
-          
-          # Append the poses to the array
-          all_poses.append(poses)
-
-  # Concatenate all loaded poses into a single array
-  all_poses_array = np.concatenate(all_poses, axis=0)
-  
-  # Extract the first three columns of the array
-  # all_poses_array = all_poses_array[:, :3]
-  
- 
   return  all_poses_array
+
+
+def get_landmark_treshold(points_3d, distance_threshold_factor):
+  average = abs(np.mean(points_3d))
+  std = abs(np.std(points_3d))
+  distance_threshold = average + distance_threshold_factor * std
+  return distance_threshold
