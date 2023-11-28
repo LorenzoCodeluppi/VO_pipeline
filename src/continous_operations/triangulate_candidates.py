@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 import params_loader as pl
-from utils.utility_tools import calculate_avarage_depth
+from utils.utility_tools import calculate_avarage_depth, get_landmark_treshold
 from structures import State
 
 
@@ -54,8 +54,9 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   if max_distance / average_depth > thumb_rule:
     triangulate_signal = True
 
-  mask = np.logical_or(distances > distance_threshold, angles > angle_treshold)
+  # mask = np.logical_or(distances > distance_threshold, angles > angle_treshold)
   # print(np.sum(angles > angle_treshold))
+  mask = distances > distance_threshold
   possible_new_landmarks = np.sum(mask)
   
   if possible_new_landmarks == 0 and triangulate_signal:

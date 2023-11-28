@@ -124,8 +124,8 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         prev_img = image
 
 if __name__ == "__main__":
-    dataset = Dataset.MALAGA
-    performance_booster = True
+    dataset = Dataset.PARKING
+    performance_booster = False
     
     pl.load_parameters(dataset)
 

@@ -8,7 +8,7 @@ def plot_trajectory(ax, trajectory,frame_idx,ground_truth = None):
     ax.set_title('Global Trajectory')
 
     if ground_truth is not None:
-        print(ground_truth)
+     
         ground_truth_x = ground_truth[:frame_idx, 0]
         ground_truth_z = ground_truth[:frame_idx, 1]
        
@@ -59,7 +59,7 @@ def plot_image(ax, image, keypoints, candidates, no_keypoints= False):
         ax.scatter(candidates[0,:], candidates[1,:], s=1, c='red', marker='o')
         ax.scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
 
-def create_plot(axis_arr, image, state, trajectory, frame_idx, keypoint_history, candidates_history, ground_truth = None, perf_boost):
+def create_plot(axis_arr, image, state, trajectory, frame_idx, keypoint_history, candidates_history,perf_boost, ground_truth = None,):
     for idx, ax in enumerate(axis_arr):
         if idx == 0:
             plot_image(ax, image, state.get_keypoints(), state.get_candidates_points(), perf_boost)
