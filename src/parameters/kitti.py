@@ -10,10 +10,10 @@ kitti_params_map = {
     "p5p_confidence": 0.9999, # Essential matrix Ransac
 
     # KLT (association)
-    "error_threshold": 10, # KLT
-    "winSize": (15, 15), # KLT
+    "error_threshold": 11, # KLT
+    "winSize": (40, 40), # KLT
     "maxLevel": 2, # KLT
-    "criteria": (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03), # KLT
+    "criteria": (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 50, 0.001), # KLT
 
     # PnP (estimate_pose)
     "reprojection_error": 1, # PnP RANSAC
@@ -31,6 +31,6 @@ kitti_params_map = {
     "distance_threshold": 0.5, # Distance to the previous frames in start triangulate
     "min_number_keypoints": 100 ,# Minimum number of keypoints to have
     "max_inlier_ratio": 0.5, # Keypoints cannot drop under this ratio between 2 consecutives frames
-    "thumb_rule": 0.1, # Rule to start trinagulate points
+    "thumb_rule": 0.2, # Rule to start trinagulate points
    
 }

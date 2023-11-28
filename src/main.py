@@ -71,7 +71,7 @@ def load_bootstrap_images(dataset, bootstrap_frames, images):
     
     return img0, img1
 
-def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_image, images, K):
+def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_image, images, K, perf_boost):
     # Continuous operation
     trajectory = np.zeros((0, 3))
     keypoints_history = np.zeros((0, 1))
@@ -80,8 +80,8 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
     prev_img = database_image
 
     fig = plt.figure()
-    fig.set_figwidth(12)
-    fig.set_figheight(7)
+    fig.set_figwidth(20)
+    fig.set_figheight(10)
 
     gs = fig.add_gridspec(2,3)
     ax1 = fig.add_subplot(gs[0,:])
@@ -104,16 +104,22 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         t = process_frame(state, prev_img, image, K)
         # Update the trajectory array
         trajectory = np.vstack([trajectory, t])
-        keypoints_history = np.vstack([keypoints_history, state.get_keypoints().shape[1]])
-        candidates_history = np.vstack([candidates_history, state.get_candidates_points().shape[1]])
+        
+        if perf_boost and trajectory.shape[0] > 20:
+            trajectory = np.delete(trajectory, 0, 0)
 
-        create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history)
+        if not perf_boost:
+            keypoints_history = np.vstack([keypoints_history, state.get_keypoints().shape[1]])
+            candidates_history = np.vstack([candidates_history, state.get_candidates_points().shape[1]])
+
+        create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history, perf_boost)
         plt.pause(0.01)
         clear_plot([ax1, ax3, ax4])
         prev_img = image
 
 if __name__ == "__main__":
-    dataset = Dataset.PARKING
+    dataset = Dataset.MALAGA
+    performance_booster = True
     
     pl.load_parameters(dataset)
 
@@ -126,7 +132,7 @@ if __name__ == "__main__":
     # TODO: check the implementation
     state = initialization(frame1, frame2, K)
 
-    run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K)
+    run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster)
 
     
 
