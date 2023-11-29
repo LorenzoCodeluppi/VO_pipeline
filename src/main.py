@@ -124,8 +124,8 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         prev_img = image
 
 if __name__ == "__main__":
-    dataset = Dataset.PARKING
-    performance_booster = False
+    dataset = Dataset.KITTI
+    performance_booster = True
     
     pl.load_parameters(dataset)
 
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     state = initialization(frame1, frame2, K)
 
     if dataset == Dataset.KITTI or dataset == Dataset.PARKING:
-        run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster,ground_truth)
+        run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster)
     else: 
         run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster)
 

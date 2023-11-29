@@ -11,8 +11,8 @@ kitti_params_map = {
 
     # KLT (association)
     "error_threshold": 11, # KLT
-    "winSize": (40, 40), # KLT
-    "maxLevel": 2, # KLT
+    "winSize": (50, 50), # KLT
+    "maxLevel": 3, # KLT
     "criteria": (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 50, 0.001), # KLT
 
     # PnP (estimate_pose)
@@ -23,14 +23,14 @@ kitti_params_map = {
     "block_size" : 7, # Harris block_size
     "k_size" : 5, # Harris k_zie
     "k" : 0.04, # Harris magic number
-    "num_corners" : 400, # Harris num of corner to extract
-    "suppression_radius" : 7, # Harris suppression radius
+    "num_corners" : 300, # Harris num of corner to extract
+    "suppression_radius" : 15, # Harris suppression radius
     "min_distance" : 8, # Harris minimum distance from other keypoints
 
     # Triangulate (triangulate_candidates, process_frame)
-    "distance_threshold": 0.5, # Distance to the previous frames in start triangulate
-    "min_number_keypoints": 100 ,# Minimum number of keypoints to have
-    "max_inlier_ratio": 0.5, # Keypoints cannot drop under this ratio between 2 consecutives frames
+    "distance_threshold": 1, # Distance to the previous frames in start triangulate
+    "min_number_keypoints": 120 ,# Minimum number of keypoints to have
+    "max_inlier_ratio": 0.30, # Keypoints cannot drop under this ratio between 2 consecutives frames
     "thumb_rule": 0.2, # Rule to start trinagulate points
    
 }
