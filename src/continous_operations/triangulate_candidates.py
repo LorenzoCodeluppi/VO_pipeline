@@ -30,7 +30,7 @@ def filter_triangulated_points(points_3d, M1, M2, K, candidates, first_obs_candi
 def triangulate_points(state: State, current_R, current_t, K, triangulate_signal):
   # parameters to tune
   distance_threshold = 1
-  angle_treshold = 3
+  angle_treshold = 10
 
   current_pose = np.hstack((current_R, current_t[:,None]))
 

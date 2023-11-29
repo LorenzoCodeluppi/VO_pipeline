@@ -113,7 +113,7 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         prev_img = image
 
 if __name__ == "__main__":
-    dataset = Dataset.PARKING
+    dataset = Dataset.KITTI
     
     pl.load_parameters(dataset)
 
