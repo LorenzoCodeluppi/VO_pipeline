@@ -10,10 +10,10 @@ kitti_params_map = {
     "p5p_confidence": 0.9999, # Essential matrix Ransac
 
     # KLT (association)
-    "error_threshold": 11, # KLT
-    "winSize": (50, 50), # KLT
+    "error_threshold": 10, # KLT
+    "winSize": (30, 30), # KLT
     "maxLevel": 3, # KLT
-    "criteria": (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 50, 0.001), # KLT
+    "criteria": (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.001), # KLT
 
     # PnP (estimate_pose)
     "reprojection_error": 1, # PnP RANSAC
