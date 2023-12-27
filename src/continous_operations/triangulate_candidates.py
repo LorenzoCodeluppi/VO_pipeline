@@ -15,15 +15,18 @@ def filter_triangulated_points(points_3d, M1, M2, K, candidates, first_obs_candi
   reprojection_errors = np.linalg.norm(candidates.T - projected_points_1, axis=1) + np.linalg.norm(first_obs_candidates.T - projected_points_2, axis=1)
 
   # Transform points to the camera coordinate system
-  points_3d_camera_frame = current_R @ (points_3d + current_t[:, None])
+  #points_3d_camera_frame = current_R @ (points_3d + current_t[:, None])
+  #print("OLD implementation points to camera frame: ", points_3d_camera_frame)
+  points_3d_camera_frame = current_R @ points_3d + current_t[:, None]
+  #print("NEW implementation points to camera frame: ", points_3d_camera_frame)
 
   treshold_x = get_landmark_treshold(points_3d_camera_frame[0], distance_threshold_factor)
   treshold_z = get_landmark_treshold(points_3d_camera_frame[2], distance_threshold_factor)
-  
+
   valid_points_mask = \
     (points_3d_camera_frame[0] < treshold_x) & \
     (points_3d_camera_frame[2] > 0) & \
-    (points_3d_camera_frame[2] < treshold_z) \
+    (points_3d_camera_frame[2] < np.min((treshold_z, 100))) \
    
   return valid_points_mask
 
@@ -49,14 +52,23 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   distances = np.linalg.norm(T - current_t[:,None], axis=0)
   max_distance = np.max(distances)
 
-  average_depth = calculate_avarage_depth(landmarks, current_R, current_t)
+  '''average_depth = calculate_avarage_depth(landmarks, current_R, current_t)
+  print("average depth of landmarks:")
+  print(average_depth)'''
+
+  my_avg = np.mean((current_R @ landmarks + current_t.reshape((current_t.shape[0], 1)))[2, :])
+  print("average depth of landmarks:")
+  print(my_avg)
+
   
-  if max_distance / average_depth > thumb_rule:
+  if max_distance / my_avg > thumb_rule:
     triangulate_signal = True
 
   # mask = np.logical_or(distances > distance_threshold, angles > angle_treshold)
   # print(np.sum(angles > angle_treshold))
   mask = distances > distance_threshold
+  # distances all the same after many frames??? means first obs of candidates is the same frame for all candidates
+  # print(distances)
   possible_new_landmarks = np.sum(mask)
   
   if possible_new_landmarks == 0 and triangulate_signal:
@@ -86,6 +98,8 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
       # landmarks filter
       valid_landmark_mask = filter_triangulated_points(points_3d, M1, M2, K, selected_candidates, selected_first_obs_candidates, current_R, current_t)
       points_3d = points_3d[:,valid_landmark_mask]
+
+      print("new landmarks: ", points_3d.shape)
 
       if new_landmarks is None:
         new_landmarks = points_3d

@@ -77,13 +77,13 @@ def clear_plot(axis_arr):
 
 def plot_final_comparison(trajectory, ground_truth, last_frame):
 
-
-    ground_truth_x = ground_truth[:last_frame, 0]
-    ground_truth_z = ground_truth[:last_frame, 1]
+    if ground_truth is not None:
+        ground_truth_x = ground_truth[:last_frame, 0]
+        ground_truth_z = ground_truth[:last_frame, 1]
 
     x = trajectory[:, 0]
     z = trajectory[:, 2]
-    
+
     # Create subplots
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7))
 
@@ -94,8 +94,9 @@ def plot_final_comparison(trajectory, ground_truth, last_frame):
     ax1.set_title('Ground Truth')
     ax2.set_title('Estimated Trajectory')
 
-    # Plot ground truth trajectory
-    ax1.plot(ground_truth_x, ground_truth_z, marker='o', markersize=1, color="blue", label="Ground Truth")
+    if ground_truth is not None:
+        # Plot ground truth trajectory
+        ax1.plot(ground_truth_x, ground_truth_z, marker='o', markersize=1, color="blue", label="Ground Truth")
 
     # Plot estimated trajectory
     ax2.plot(x, z, marker='o', markersize=1, color="black")

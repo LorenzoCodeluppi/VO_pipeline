@@ -38,7 +38,7 @@ def show_bearings(bearing_current_cam, bearing_prev_cam, current_pose, prev_pose
 
 
 def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
-    """ Calculate the angle between bearing vectors in the world frame.
+    """ Calculate the angle between bearing vectors in the same coordinate frame.
 
     Inputs:
      - current_points: np.ndarray(2, N) - 2D points in the current frame
@@ -51,12 +51,11 @@ def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
      - angles_degrees: np.ndarray(N,) - Angles between corresponding vectors in degrees
    """
 
-    poses = np.reshape(poses, (12, poses.shape[2])).T
     num_points = prev_points.shape[1]
     K_inv = np.linalg.inv(K)
 
     # Get Rotation matrix of current pose
-    R_current = current_pose[:3, :3].T
+    R_current = current_pose[:3, :3]
 
     # Convert points to homogeneous coordinates
     current_points_homogeneous = np.vstack((current_points, np.ones((1, num_points))))
@@ -70,8 +69,8 @@ def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
 
     for i in range(num_points):
         # Get R and t matrices of previous pose
-        t_prev = poses[i, :].reshape((3, 4))
-        R_prev = t_prev[:3, :3].T
+        T_prev = poses[:, :, i]
+        R_prev = T_prev[:3, :3]
 
         # De-rotate previous point to current camera frame
         deRotation = R_prev.T @ R_current
@@ -105,6 +104,7 @@ def calculate_inlier_ratio(previous_keypoints, inlier_keypoints):
 def calculate_avarage_depth(landmarks, R, t):
   position = -np.matmul(R.T, t)
   return np.mean(landmarks[-1,:]) - position[-1]
+
 
 def get_validation_mask(status, error, threshold):
   if error is not None:

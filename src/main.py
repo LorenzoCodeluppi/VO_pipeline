@@ -26,7 +26,7 @@ def load_dataset(dataset):
         assert 'kitti_path' in globals(), "kitti_path not defined"
         ground_truth = np.loadtxt(f"{kitti_path}/poses/05.txt")
         ground_truth = ground_truth[:, [3, 11]]
-        last_frame = 2761
+        last_frame = 2760
         K = np.array([[7.188560000000e+02, 0, 6.071928000000e+02],
                     [0, 7.188560000000e+02, 1.852157000000e+02],
                     [0, 0, 1]])
@@ -93,6 +93,7 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         ax3 = fig.add_subplot(gs[1, 1])
         ax4 = fig.add_subplot(gs[1, 2])
 
+
     for i in range(bootstrap_frames[1] + 1, last_frame + 1):
     # for i in range(bootstrap_frames[1] + 1, 35):
         print(f"\n\nProcessing frame {i}\n=====================")
@@ -108,6 +109,12 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         t = process_frame(state, prev_img, image, K)
         # Update the trajectory array
         trajectory = np.vstack([trajectory, t])
+
+
+        print(state.landmarks.shape)
+        if not final_comparison:
+            ax2.set_aspect('equal', adjustable='datalim')
+
 
         prev_img = image
 
@@ -125,24 +132,26 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
             candidates_history = np.vstack([candidates_history, state.get_candidates_points().shape[1]])
 
         if ground_truth is not None:
-            create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history,perf_boost, ground_truth)
+            create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history, perf_boost, ground_truth)
         else:
-            create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history,perf_boost)
+            create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history, perf_boost, None)
         plt.pause(0.01)
         clear_plot([ax1, ax3, ax4])
 
 if __name__ == "__main__":
 
 # SELECT DATASET 
-    dataset = Dataset.PARKING
+    dataset = Dataset.KITTI
 # IF YOU WANT TO PLOT JUST THE LOCAL TRAJECTORY SET performance_booster = True
-    performance_booster = False
+    performance_booster = True
 # IF YOU WANT TO COMPARE THE TRAJECTORY WITH THE GROUND TRUTH SET ground_truth_mode = True
     ground_truth_mode = True
 # IF YOU WANT TO PLOT THE FINAL COMPARISON SET final_comparison = True // WARNING: IT WILL NOT PLOT THE TEMPORARY RESULTS
-    final_comparison = False
+# (NOT POSSIBLE WITH MALAGA AS NO ground_truth IS PROVIDED)
+    final_comparison = True
     
     pl.load_parameters(dataset)
+    #pl.load_parameters(Dataset.KITTI)
 
     bootstrap_frames = pl.params["bootstrap_frames"]
 
@@ -157,9 +166,9 @@ if __name__ == "__main__":
     state = initialization(frame1, frame2, K)
 
     if (dataset == Dataset.KITTI or dataset == Dataset.PARKING) and ground_truth_mode :
-        run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster,ground_truth,final_comparison)
+        run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster, ground_truth, final_comparison)
     else: 
-        run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster,final_comparison)
+        run_pipeline(dataset, state, bootstrap_frames, last_frame, frame2, images, K, performance_booster, None, final_comparison)
 
     
 
