@@ -78,6 +78,7 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
     prev_poses = poses[:,mask]
     
     unique_poses = np.unique(prev_poses, axis = 1)
+    print("unique poses: ", unique_poses.shape)
     new_landmarks = None
 
     filter_candidates_mask = np.ones(poses.shape[1], dtype=bool)

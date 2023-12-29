@@ -148,7 +148,7 @@ if __name__ == "__main__":
     ground_truth_mode = True
 # IF YOU WANT TO PLOT THE FINAL COMPARISON SET final_comparison = True // WARNING: IT WILL NOT PLOT THE TEMPORARY RESULTS
 # (NOT POSSIBLE WITH MALAGA AS NO ground_truth IS PROVIDED)
-    final_comparison = True
+    final_comparison = False
     
     pl.load_parameters(dataset)
     #pl.load_parameters(Dataset.KITTI)

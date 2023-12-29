@@ -19,12 +19,14 @@ class State():
     self.landmarks = landmarks
 
   def update_state(self, new_keypoints, new_landmarks, update = False):
-    if not update:
-      self.keypoints = new_keypoints
-      self.landmarks = new_landmarks
-    else:
-      self.keypoints = np.concatenate((self.keypoints, new_keypoints), axis=1)
-      self.landmarks = np.concatenate((self.landmarks, new_landmarks), axis=1)
+    self.keypoints = new_keypoints
+    self.landmarks = new_landmarks
+    # if not update:
+      # self.keypoints = new_keypoints
+      # self.landmarks = new_landmarks
+    # else:
+    #   self.keypoints = np.concatenate((self.keypoints, new_keypoints), axis=1)
+    #   self.landmarks = np.concatenate((self.landmarks, new_landmarks), axis=1)
   
   def update_candidates_points(self, new_candidates_points, replace = False):
     assert new_candidates_points.shape[0] == 2; "Wrong candidate points dimension"
