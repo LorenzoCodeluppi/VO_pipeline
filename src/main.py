@@ -135,15 +135,15 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
             create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history, perf_boost, ground_truth)
         else:
             create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history, perf_boost, None)
-        plt.pause(0.01)
+        plt.pause(0.0005)
         clear_plot([ax1, ax3, ax4])
 
 if __name__ == "__main__":
 
 # SELECT DATASET 
-    dataset = Dataset.KITTI
+    dataset = Dataset.MALAGA
 # IF YOU WANT TO PLOT JUST THE LOCAL TRAJECTORY SET performance_booster = True
-    performance_booster = True
+    performance_booster = False
 # IF YOU WANT TO COMPARE THE TRAJECTORY WITH THE GROUND TRUTH SET ground_truth_mode = True
     ground_truth_mode = True
 # IF YOU WANT TO PLOT THE FINAL COMPARISON SET final_comparison = True // WARNING: IT WILL NOT PLOT THE TEMPORARY RESULTS

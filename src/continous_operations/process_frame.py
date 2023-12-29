@@ -19,14 +19,14 @@ def process_frame(state: State, database_image, query_image, K):
   # 4.2 we estimate the pose using PnP and recover R and t matrices
   R, t, inlier_keypoints, inlier_landmarks  = estimate_pose(state, landmarks, keypoints, K)
 
-  inlier_ratio = calculate_inlier_ratio(state.get_keypoints(), inlier_keypoints)
+  # inlier_ratio = calculate_inlier_ratio(state.get_keypoints(), inlier_keypoints)
 
-  if inlier_landmarks.shape[0] < min_number_keypoints or inlier_ratio < max_inlier_ratio:
-    triangulate_signal = True
+  # if inlier_landmarks.shape[0] < min_number_keypoints or inlier_ratio < max_inlier_ratio:
+  #   triangulate_signal = True
 
   state.update_state(inlier_keypoints.T, inlier_landmarks.T)
 
-  # 4.3 we add new keypoints
+  # # 4.3 we add new keypoints
   new_candidates_point = evaluate_new_candidates(state.get_all_keypoints(), query_image)
 
   # update the state of candidates point

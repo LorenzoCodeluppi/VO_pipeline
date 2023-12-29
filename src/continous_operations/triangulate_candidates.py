@@ -26,13 +26,12 @@ def filter_triangulated_points(points_3d, M1, M2, K, candidates, first_obs_candi
   valid_points_mask = \
     (points_3d_camera_frame[0] < treshold_x) & \
     (points_3d_camera_frame[2] > 0) & \
-    (points_3d_camera_frame[2] < np.min((treshold_z, 100))) \
+    (points_3d_camera_frame[2] < np.min((treshold_z, 1000))) \
    
   return valid_points_mask
 
 def triangulate_points(state: State, current_R, current_t, K, triangulate_signal):
   # parameters to tune
-  distance_threshold = 1
   angle_treshold = 30
 
   current_pose = np.hstack((current_R, current_t[:,None]))
@@ -56,13 +55,14 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   print("average depth of landmarks:")
   print(average_depth)'''
 
-  my_avg = np.mean((current_R @ landmarks + current_t.reshape((current_t.shape[0], 1)))[2, :])
+  # my_avg = np.mean((current_R @ landmarks + current_t.reshape((current_t.shape[0], 1)))[2, :])
+  my_avg = np.mean(landmarks[-1,:])
   print("average depth of landmarks:")
   print(my_avg)
 
   
-  if max_distance / my_avg > thumb_rule:
-    triangulate_signal = True
+  # if max_distance / my_avg > thumb_rule:
+  #   triangulate_signal = True
 
   # mask = np.logical_or(distances > distance_threshold, angles > angle_treshold)
   # print(np.sum(angles > angle_treshold))
@@ -70,9 +70,9 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   # distances all the same after many frames??? means first obs of candidates is the same frame for all candidates
   # print(distances)
   possible_new_landmarks = np.sum(mask)
-  
+  print("mean distance", np.mean(distances), np.max(distances))
   if possible_new_landmarks == 0 and triangulate_signal:
-    mask = distances >= np.max(distances)
+    mask = distances >= np.mean(distances)
 
   if possible_new_landmarks > 0 or triangulate_signal:
     prev_poses = poses[:,mask]

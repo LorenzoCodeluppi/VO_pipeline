@@ -11,17 +11,17 @@ malaga_params_map = {
 
     # KLT (association)
     "error_threshold": 10, # KLT
-    "winSize": (15, 15), # KLT
+    "winSize": (10, 10), # KLT
     "maxLevel": 2, # KLT
-    "criteria": (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03), # KLT
+    "criteria": (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 20, 1), # KLT
 
     # PnP (estimate_pose)
-    "reprojection_error": 1, # PnP RANSAC
+    "reprojection_error": 8, # PnP RANSAC
     "pnp_confidence_" : 0.999, # PnP RANSAC
 
     # Harris (evaluate_points)
     "block_size" : 7, # Harris block_size
-    "k_size" : 5, # Harris k_zie
+    "k_size" : 7, # Harris k_zie
     "k" : 0.04, # Harris magic number
     "num_corners" : 400, # Harris num of corner to extract
     "suppression_radius" : 7, # Harris suppression radius

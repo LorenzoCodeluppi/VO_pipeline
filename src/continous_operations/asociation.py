@@ -3,6 +3,7 @@ import numpy as np
 
 import params_loader as pl
 from utils.utility_tools import get_validation_mask
+from klt.track_klt_robustly import trackKLTRobustly
 from structures import State
 
 # KLT has no bounds, point can be outside of the image... need a smart fix
@@ -15,6 +16,7 @@ def keypoint_association(state: State, database_image, query_image, K):
   win_size = pl.params["winSize"]
   max_level = pl.params["maxLevel"]
   criteria = pl.params["criteria"]
+
 
   lk_params = dict(winSize=win_size,
     maxLevel=max_level,
