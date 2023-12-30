@@ -1,5 +1,7 @@
 import os
 from pathlib import Path
+
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -49,9 +51,30 @@ def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
 
     Output:
      - angles_degrees: np.ndarray(N,) - Angles between corresponding vectors in degrees
-   """
+    """
 
     num_points = prev_points.shape[1]
+
+    C1_points = poses[:, 3, :]
+    C2 = current_pose[:, 3]
+
+    angles = np.zeros(num_points)
+
+    for i in range(num_points):
+        candidate_landmark_homogeneous = cv2.triangulatePoints(K @ poses[:, :, i].reshape((3,4)), K @ current_pose.reshape((3,4)), prev_points[:, i].reshape((2,1)), current_points[:, i].reshape((2,1)))
+        candidate_landmark = candidate_landmark_homogeneous[:3] / candidate_landmark_homogeneous[3]
+
+        a = C1_points[:, i].reshape((3, 1)) - candidate_landmark
+        b = C2.reshape((3, 1)) - candidate_landmark
+
+        cos_of_angle = (a.T @ b) / (np.linalg.norm(a) * np.linalg.norm(b))
+        cos_of_angle = np.clip(cos_of_angle, -1, 1)
+
+        angles[i] = np.rad2deg(np.arccos(cos_of_angle))
+
+    return angles
+
+    '''num_points = prev_points.shape[1]
     K_inv = np.linalg.inv(K)
 
     # Get Rotation matrix of current pose
@@ -91,7 +114,7 @@ def get_angle_bearing(current_points, prev_points, poses, current_pose, K):
 
     angles_degrees = np.degrees(angles)
 
-    return angles_degrees
+    return angles_degrees'''
 
 
 def calculate_inlier_ratio(previous_keypoints, inlier_keypoints):

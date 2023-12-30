@@ -27,6 +27,7 @@ class State():
       self.landmarks = np.concatenate((self.landmarks, new_landmarks), axis=1)
   
   def update_candidates_points(self, new_candidates_points, replace = False):
+
     assert new_candidates_points.shape[0] == 2; "Wrong candidate points dimension"
 
     if self.candidates_points is None or replace is True:

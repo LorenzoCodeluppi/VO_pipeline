@@ -12,24 +12,24 @@ kitti_params_map = {
     # KLT (association)
     "error_threshold": 10, # KLT
     "winSize": (5, 5), # KLT
-    "maxLevel": 2, # KLT
-    "criteria": (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.01), # KLT
+    "maxLevel": 3, # KLT
+    "criteria": (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.001), # KLT
 
     # PnP (estimate_pose)
-    "reprojection_error": 15, # PnP RANSAC, OpenCV default is 8
-    "pnp_confidence_" : 0.9999, # PnP RANSAC, OpenCV default is 0.99
+    "reprojection_error": 1, # PnP RANSAC
+    "pnp_confidence_" : 0.999, # PnP RANSAC
 
     # Harris (evaluate_points)
     "block_size" : 7, # Harris block_size
     "k_size" : 5, # Harris k_zie
     "k" : 0.04, # Harris magic number
-    "num_corners" : 400, # Harris num of corner to extract
+    "num_corners" : 300, # Harris num of corner to extract
     "suppression_radius" : 15, # Harris suppression radius
     "min_distance" : 8, # Harris minimum distance from other keypoints
 
     # Triangulate (triangulate_candidates, process_frame)
     "distance_threshold": 1, # Distance to the previous frames in start triangulate
-    "min_number_keypoints": 100 ,# Minimum number of keypoints to have
+    "min_number_keypoints": 120 ,# Minimum number of keypoints to have
     "max_inlier_ratio": 0.30, # Keypoints cannot drop under this ratio between 2 consecutives frames
     "thumb_rule": 0.2, # Rule to start trinagulate points
    

@@ -141,7 +141,7 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
 if __name__ == "__main__":
 
 # SELECT DATASET 
-    dataset = Dataset.MALAGA
+    dataset = Dataset.KITTI
 # IF YOU WANT TO PLOT JUST THE LOCAL TRAJECTORY SET performance_booster = True
     performance_booster = False
 # IF YOU WANT TO COMPARE THE TRAJECTORY WITH THE GROUND TRUTH SET ground_truth_mode = True
@@ -151,7 +151,6 @@ if __name__ == "__main__":
     final_comparison = False
     
     pl.load_parameters(dataset)
-    #pl.load_parameters(Dataset.KITTI)
 
     bootstrap_frames = pl.params["bootstrap_frames"]
 
