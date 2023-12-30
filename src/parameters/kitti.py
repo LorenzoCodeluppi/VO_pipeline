@@ -11,7 +11,7 @@ kitti_params_map = {
 
     # KLT (association)
     "error_threshold": 10, # KLT
-    "winSize": (5, 5), # KLT
+    "winSize": (30, 30), # KLT
     "maxLevel": 3, # KLT
     "criteria": (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 30, 0.001), # KLT
 

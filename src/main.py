@@ -135,7 +135,7 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
             create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history, perf_boost, ground_truth)
         else:
             create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history, perf_boost, None)
-        plt.pause(0.0005)
+        plt.pause(0.01)
         clear_plot([ax1, ax3, ax4])
 
 if __name__ == "__main__":
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     ground_truth_mode = True
 # IF YOU WANT TO PLOT THE FINAL COMPARISON SET final_comparison = True // WARNING: IT WILL NOT PLOT THE TEMPORARY RESULTS
 # (NOT POSSIBLE WITH MALAGA AS NO ground_truth IS PROVIDED)
-    final_comparison = False
+    final_comparison = True
     
     pl.load_parameters(dataset)
 
