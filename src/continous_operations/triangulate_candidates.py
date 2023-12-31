@@ -65,19 +65,11 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   print(my_avg)
 
   
-  if max_distance / my_avg > thumb_rule:
-    triangulate_signal = True
-
-  # mask = np.logical_or(distances > distance_threshold, angles > angle_treshold)
-  # print(np.sum(angles > angle_treshold))
   mask = distances > distance_threshold
   # distances all the same after many frames??? means first obs of candidates is the same frame for all candidates
   # print(distances)
   possible_new_landmarks = np.sum(mask)
   
-  if possible_new_landmarks == 0 and triangulate_signal:
-    mask = distances >= np.max(distances)
-
   if possible_new_landmarks > 0 or triangulate_signal:
     prev_poses = poses[:,mask]
     

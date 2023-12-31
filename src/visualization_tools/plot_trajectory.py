@@ -56,8 +56,8 @@ def plot_cand(ax, state, keypoint_history, candidates_history):
 def plot_image(ax, image, keypoints, candidates, no_keypoints= False):
     ax.imshow(image, cmap="gray")
     if not no_keypoints:
-        ax.scatter(candidates[0,:], candidates[1,:], s=1, c='red', marker='o')
-        ax.scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
+        ax.scatter(candidates[0,:], candidates[1,:], s=10, c='red', marker='o')
+        ax.scatter(keypoints[0,:], keypoints[1,:], s=10, c='green', marker='x')
 
 def create_plot(axis_arr, image, state, trajectory, frame_idx, keypoint_history, candidates_history,perf_boost, ground_truth = None,):
     for idx, ax in enumerate(axis_arr):

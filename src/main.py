@@ -78,6 +78,8 @@ def load_bootstrap_images(dataset, bootstrap_frames, images):
 def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_image, images, K, perf_boost, ground_truth = None,final_comparison = False):
     # Continuous operation
     trajectory = np.zeros((0, 3))
+    states_history = []
+
     keypoints_history = np.zeros((0, 1))
     candidates_history = np.zeros((0, 1))
 
@@ -99,22 +101,24 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         print(f"\n\nProcessing frame {i}\n=====================")
         if dataset == Dataset.KITTI:
             image = cv2.imread(f"{kitti_path}/05/image_0/{i:06d}.png", cv2.IMREAD_GRAYSCALE)
+            reinizialize_image = cv2.imread(f"{kitti_path}/05/image_0/{i-bootstrap_frames[1]:06d}.png", cv2.IMREAD_GRAYSCALE)
         elif dataset == Dataset.MALAGA:
             image = cv2.imread(f"{malaga_path}/malaga-urban-dataset-extract-07_rectified_800x600_Images/{images[i]}", cv2.IMREAD_GRAYSCALE)
+            reinizialize_image = cv2.imread(f"{malaga_path}/malaga-urban-dataset-extract-07_rectified_800x600_Images/{images[i-bootstrap_frames[1]]}", cv2.IMREAD_GRAYSCALE)
         elif dataset == Dataset.PARKING:
             image = cv2.imread(f"{parking_path}/images/img_{i:05d}.png", cv2.IMREAD_GRAYSCALE)
+            reinizialize_image =  cv2.imread(f"{parking_path}/images/img_{i-bootstrap_frames[1]:05d}.png", cv2.IMREAD_GRAYSCALE)
         else:
             assert False
 
-        t = process_frame(state, prev_img, image, K)
+        t, state, states_history = process_frame(state, reinizialize_image, prev_img, image, K, states_history)
+   
         # Update the trajectory array
         trajectory = np.vstack([trajectory, t])
-
 
         print(state.landmarks.shape)
         if not final_comparison:
             ax2.set_aspect('equal', adjustable='datalim')
-
 
         prev_img = image
 
@@ -140,15 +144,15 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
 
 if __name__ == "__main__":
 
-# SELECT DATASET 
+    # SELECT DATASET 
     dataset = Dataset.KITTI
-# IF YOU WANT TO PLOT JUST THE LOCAL TRAJECTORY SET performance_booster = True
+    # IF YOU WANT TO PLOT JUST THE LOCAL TRAJECTORY SET performance_booster = True
     performance_booster = False
-# IF YOU WANT TO COMPARE THE TRAJECTORY WITH THE GROUND TRUTH SET ground_truth_mode = True
+    # IF YOU WANT TO COMPARE THE TRAJECTORY WITH THE GROUND TRUTH SET ground_truth_mode = True
     ground_truth_mode = True
-# IF YOU WANT TO PLOT THE FINAL COMPARISON SET final_comparison = True // WARNING: IT WILL NOT PLOT THE TEMPORARY RESULTS
-# (NOT POSSIBLE WITH MALAGA AS NO ground_truth IS PROVIDED)
-    final_comparison = True
+    # IF YOU WANT TO PLOT THE FINAL COMPARISON SET final_comparison = True // WARNING: IT WILL NOT PLOT THE TEMPORARY RESULTS
+    # (NOT POSSIBLE WITH MALAGA AS NO ground_truth IS PROVIDED)
+    final_comparison = False
     
     pl.load_parameters(dataset)
 

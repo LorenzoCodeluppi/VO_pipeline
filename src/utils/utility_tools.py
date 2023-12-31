@@ -101,9 +101,8 @@ def calculate_inlier_ratio(previous_keypoints, inlier_keypoints):
 
   return keypoints_ratio
 
-def calculate_avarage_depth(landmarks, R, t):
-  position = -np.matmul(R.T, t)
-  return np.mean(landmarks[-1,:]) - position[-1]
+def calculate_avarage_depth(current_R, current_t, landmarks):
+  return np.mean((current_R @ landmarks + current_t.reshape((current_t.shape[0], 1)))[2, :])
 
 
 def get_validation_mask(status, error, threshold):

@@ -37,7 +37,7 @@ def show_bearings(current_points, prev_points, R, t, K):
     # plt.pause(1)
     # plt.clf()
 
-def initialization(frame1, frame2, K) -> State:
+def initialization(frame1, frame2, K, prev_R = np.eye(3), prev_t = np.zeros(3)) -> State:
     # SIFT tunable parameters
     match_per_descriptor = pl.params["match_per_descriptor"]
     match_treshold = pl.params["match_treshold"]
@@ -63,7 +63,6 @@ def initialization(frame1, frame2, K) -> State:
     src_pts = np.float32([kp1[m.queryIdx].pt for m in good_matches]).reshape(-1, 2)
     dst_pts = np.float32([kp2[m.trainIdx].pt for m in good_matches]).reshape(-1, 2)
 
-
     # Find fundamental matrix using RANSAC
     E, mask = cv2.findEssentialMat(src_pts, dst_pts, K, cv2.FM_RANSAC, confidence, repojection_error_tollerance)
 
@@ -77,13 +76,13 @@ def initialization(frame1, frame2, K) -> State:
     M1 = K @ np.eye(3, 4)
     M2 = K @ np.hstack((R, t))
     
- 
+
     # Triangulate 3D points from the matches
     points_3d_homogeneous = cv2.triangulatePoints(M1, M2, src_pts.T, dst_pts.T)
-   
+
     # Normalize homogeneous coordinates
     points_3d = points_3d_homogeneous[:3,:] / points_3d_homogeneous[-1,:]
-
+   
     # filter landmark behind the camera
     validation_mask = points_3d[2] > 0
     points_3d = points_3d[:, validation_mask]
@@ -94,4 +93,47 @@ def initialization(frame1, frame2, K) -> State:
     # plot_point_cloud(points_3d, np.eye(3), t.flatten())
     # plot_feature_2D(points_3d, t.flatten())
 
+    return State(dst_pts.T, points_3d)
+
+
+
+def reinitialize(frame1, frame2, K, prev_R, prev_T, current_R, current_T) -> State:
+    # SIFT tunable parameters
+    match_per_descriptor = pl.params["match_per_descriptor"]
+    match_treshold = pl.params["match_treshold"]
+
+    # SIFT feature detector
+    sift = cv2.SIFT_create()
+
+    # Detect keypoints and compute descriptors for both frames
+    kp1, des1 = sift.detectAndCompute(frame1, None)
+    kp2, des2 = sift.detectAndCompute(frame2, None)
+
+    # Use a brute-force matcher to find matches between descriptors
+    bf = cv2.BFMatcher()
+    matches = bf.knnMatch(des1, des2, k=match_per_descriptor)
+
+    # Apply ratio test to get good matches
+    good_matches = [m for m, n in matches if m.distance < match_treshold * n.distance]
+
+    # Extract matched keypoints
+    src_pts = np.float32([kp1[m.queryIdx].pt for m in good_matches]).reshape(-1, 2)
+    dst_pts = np.float32([kp2[m.trainIdx].pt for m in good_matches]).reshape(-1, 2)
+
+    M1 = K @ np.hstack((prev_R, prev_T[:,None]))
+    M2 = K @ np.hstack((current_R, current_T[:,None]))
+    
+    # Triangulate 3D points from the matches
+    points_3d_homogeneous = cv2.triangulatePoints(M1, M2, src_pts.T, dst_pts.T)
+
+    # Normalize homogeneous coordinates
+    points_3d = points_3d_homogeneous[:3,:] / points_3d_homogeneous[-1,:]
+
+    # filter landmark behind the camera
+    points_3d_camera_frame = current_R @ points_3d + current_T[:, None]
+    validation_mask = points_3d_camera_frame[2] > 0
+    points_3d = points_3d[:, validation_mask]
+    src_pts = src_pts[validation_mask]
+    dst_pts = dst_pts[validation_mask]
+    
     return State(dst_pts.T, points_3d)
