@@ -45,16 +45,18 @@ def plot_local_trajectory(ax, trajectory, landmarks = None, restrict_view = True
 
 def plot_cand(ax, state, keypoint_history, candidates_history):
     # Add a subplot for the number of candidates and keypoints
-    ax.set_title('Number of Candidates and Keypoints')
+    ax.set_title('Number of Keypoints')
     ax.set_xlabel('Frame')
-    ax.legend(['Candidates', 'Keypoints'])
+    ax.legend(['Keypoints'])
 
-    # ax.plot(candidates_history, marker='x',markersize = 2, color='red')
     ax.plot(keypoint_history[-20:], marker='x', markersize = 2, color='green')
 
 
 def plot_image(ax, image, keypoints, candidates, no_keypoints= False):
     ax.imshow(image, cmap="gray")
+    ax.set_xlim(left=0, right=image.shape[1])
+    ax.set_ylim(top=0, bottom=image.shape[0])
+    print(image.shape)
     if not no_keypoints:
         ax.scatter(candidates[0,:], candidates[1,:], s=1, c='red', marker='o')
         ax.scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
@@ -89,6 +91,9 @@ def plot_final_comparison(trajectory, ground_truth, last_frame):
 
     fig.set_figheight(10)
     fig.set_figwidth(10)
+
+    ax1.set_aspect('equal', adjustable='datalim')
+    ax2.set_aspect('equal', adjustable='datalim')
 
     # Set titles
     ax1.set_title('Ground Truth')

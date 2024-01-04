@@ -12,8 +12,8 @@ class State():
   candidates_points = None #2XM
   first_obs_candidates = None #2XM
   camera_pose_candidates = None #12XM
+  img_shape = None
 
-  # only INLIERS
   def __init__(self, keypoints, landmarks):
     self.keypoints = keypoints
     self.landmarks = landmarks
@@ -42,7 +42,6 @@ class State():
     else:
       self.first_obs_candidates = np.concatenate((self.first_obs_candidates, new_first_obs_candidates), axis=1)
 
-  # To be defined
   def update_camera_pose_candidates(self, new_camera_pose_candidates, replace = False):
     assert new_camera_pose_candidates.shape[0] == 12; "Wrong candidate points dimension"
 

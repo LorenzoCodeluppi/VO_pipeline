@@ -30,7 +30,7 @@ kitti_params_map = {
     # Triangulate (triangulate_candidates, process_frame)
     "distance_threshold": 1, # Distance to the previous frames in start triangulate
     "min_number_keypoints": 120 ,# Minimum number of keypoints to have
-    "max_inlier_ratio": 0.30, # Keypoints cannot drop under this ratio between 2 consecutives frames
+    "max_inlier_ratio": 0.3, # Keypoints cannot drop under this ratio between 2 consecutives frames
     "thumb_rule": 0.2, # Rule to start trinagulate points
    
 }

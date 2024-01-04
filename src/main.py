@@ -72,6 +72,8 @@ def load_bootstrap_images(dataset, bootstrap_frames, images):
         img1 = cv2.imread(f"{parking_path}/images/img_{bootstrap_frames[1]:05d}.png", cv2.IMREAD_GRAYSCALE)
     else:
         assert False
+
+    State.img_shape = img0.shape
     
     return img0, img1
 
@@ -93,9 +95,9 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         ax3 = fig.add_subplot(gs[1, 1])
         ax4 = fig.add_subplot(gs[1, 2])
 
+    plt.pause(20)
 
     for i in range(bootstrap_frames[1] + 1, last_frame + 1):
-    # for i in range(bootstrap_frames[1] + 1, 35):
         print(f"\n\nProcessing frame {i}\n=====================")
         if dataset == Dataset.KITTI:
             image = cv2.imread(f"{kitti_path}/05/image_0/{i:06d}.png", cv2.IMREAD_GRAYSCALE)
@@ -110,11 +112,8 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         # Update the trajectory array
         trajectory = np.vstack([trajectory, t])
 
-
-        print(state.landmarks.shape)
         if not final_comparison:
             ax2.set_aspect('equal', adjustable='datalim')
-
 
         prev_img = image
 
@@ -136,19 +135,20 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         else:
             create_plot([ax1, ax2, ax3, ax4], image, state, trajectory, i, keypoints_history, candidates_history, perf_boost, None)
         plt.pause(0.01)
-        clear_plot([ax1, ax3, ax4])
+        clear_plot([ax1, ax2, ax3, ax4])
 
 if __name__ == "__main__":
 
-# SELECT DATASET 
-    dataset = Dataset.KITTI
-# IF YOU WANT TO PLOT JUST THE LOCAL TRAJECTORY SET performance_booster = True
+    # SELECT DATASET
+    dataset = Dataset.PARKING
+    # IF YOU WANT TO PLOT JUST THE LOCAL TRAJECTORY SET performance_booster = True
     performance_booster = False
-# IF YOU WANT TO COMPARE THE TRAJECTORY WITH THE GROUND TRUTH SET ground_truth_mode = True
+    # IF YOU WANT TO COMPARE THE TRAJECTORY WITH THE GROUND TRUTH SET ground_truth_mode = True
     ground_truth_mode = True
-# IF YOU WANT TO PLOT THE FINAL COMPARISON SET final_comparison = True // WARNING: IT WILL NOT PLOT THE TEMPORARY RESULTS
-# (NOT POSSIBLE WITH MALAGA AS NO ground_truth IS PROVIDED)
-    final_comparison = True
+    # IF YOU WANT TO PLOT THE FINAL COMPARISON SET final_comparison = True
+    # - WARNING: IT WILL NOT PLOT THE TEMPORARY RESULTS
+    # - FOR THE MALAGA DATASET NO ground_truth IS PROVIDED
+    final_comparison = False
     
     pl.load_parameters(dataset)
 
@@ -161,7 +161,6 @@ if __name__ == "__main__":
 
     frame1, frame2 = load_bootstrap_images(dataset, bootstrap_frames, images)
 
-    # TODO: check the implementation
     state = initialization(frame1, frame2, K)
 
     if (dataset == Dataset.KITTI or dataset == Dataset.PARKING) and ground_truth_mode :

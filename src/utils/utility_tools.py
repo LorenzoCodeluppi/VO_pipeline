@@ -3,6 +3,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def cross2Matrix(x):
   """ Antisymmetric matrix corresponding to a 3-vector
     Computes the antisymmetric matrix M corresponding to a 3-vector x such

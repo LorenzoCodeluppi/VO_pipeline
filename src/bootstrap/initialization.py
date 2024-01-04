@@ -28,14 +28,6 @@ def show_bearings(current_points, prev_points, R, t, K):
     x2 = [0, bearing_prev_cam[0][0]]
     z2 = [0, bearing_prev_cam[2][0]]
 
-    # print(prev_points[0], current_points[0])
-    # print(bearing_prev_cam[:,0], bearing_current_cam[:,0])
-    # print(bearing_current_cam[:,0])
-    # plt.plot(x1, z1, c='blue')
-    # plt.plot(x2, z2, c='red')
-    # plt.show()
-    # plt.pause(1)
-    # plt.clf()
 
 def initialization(frame1, frame2, K) -> State:
     # SIFT tunable parameters
@@ -64,10 +56,9 @@ def initialization(frame1, frame2, K) -> State:
     dst_pts = np.float32([kp2[m.trainIdx].pt for m in good_matches]).reshape(-1, 2)
 
 
-    # Find fundamental matrix using RANSAC
+    # Find essential matrix using RANSAC
     E, mask = cv2.findEssentialMat(src_pts, dst_pts, K, cv2.FM_RANSAC, confidence, repojection_error_tollerance)
 
-    # plot_matched_points_with_lines(frame1, src_pts, dst_pts, mask)
     # Filter out outliers
     src_pts = src_pts[mask.ravel() == 1]
     dst_pts = dst_pts[mask.ravel() == 1]
@@ -91,7 +82,5 @@ def initialization(frame1, frame2, K) -> State:
     dst_pts = dst_pts[validation_mask]
     
     show_bearings(dst_pts, src_pts, R, t.flatten(), K)
-    # plot_point_cloud(points_3d, np.eye(3), t.flatten())
-    # plot_feature_2D(points_3d, t.flatten())
 
     return State(dst_pts.T, points_3d)
