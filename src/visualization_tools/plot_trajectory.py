@@ -45,16 +45,18 @@ def plot_local_trajectory(ax, trajectory, landmarks = None, restrict_view = True
 
 def plot_cand(ax, state, keypoint_history, candidates_history):
     # Add a subplot for the number of candidates and keypoints
-    ax.set_title('Number of Candidates and Keypoints')
+    ax.set_title('Number of Keypoints')
     ax.set_xlabel('Frame')
-    ax.legend(['Candidates', 'Keypoints'])
+    ax.legend(['Keypoints'])
 
-    # ax.plot(candidates_history, marker='x',markersize = 2, color='red')
     ax.plot(keypoint_history[-20:], marker='x', markersize = 2, color='green')
 
 
 def plot_image(ax, image, keypoints, candidates, no_keypoints= False):
     ax.imshow(image, cmap="gray")
+    ax.set_xlim(left=0, right=image.shape[1])
+    ax.set_ylim(top=0, bottom=image.shape[0])
+    print(image.shape)
     if not no_keypoints:
         ax.scatter(candidates[0,:], candidates[1,:], s=1, c='red', marker='o')
         ax.scatter(keypoints[0,:], keypoints[1,:], s=1, c='green', marker='x')
@@ -77,25 +79,29 @@ def clear_plot(axis_arr):
 
 def plot_final_comparison(trajectory, ground_truth, last_frame):
 
-
-    ground_truth_x = ground_truth[:last_frame, 0]
-    ground_truth_z = ground_truth[:last_frame, 1]
+    if ground_truth is not None:
+        ground_truth_x = ground_truth[:last_frame, 0]
+        ground_truth_z = ground_truth[:last_frame, 1]
 
     x = trajectory[:, 0]
     z = trajectory[:, 2]
-    
+
     # Create subplots
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7))
 
     fig.set_figheight(10)
     fig.set_figwidth(10)
 
+    ax1.set_aspect('equal', adjustable='datalim')
+    ax2.set_aspect('equal', adjustable='datalim')
+
     # Set titles
     ax1.set_title('Ground Truth')
     ax2.set_title('Estimated Trajectory')
 
-    # Plot ground truth trajectory
-    ax1.plot(ground_truth_x, ground_truth_z, marker='o', markersize=1, color="blue", label="Ground Truth")
+    if ground_truth is not None:
+        # Plot ground truth trajectory
+        ax1.plot(ground_truth_x, ground_truth_z, marker='o', markersize=1, color="blue", label="Ground Truth")
 
     # Plot estimated trajectory
     ax2.plot(x, z, marker='o', markersize=1, color="black")

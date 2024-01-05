@@ -8,29 +8,27 @@ from structures import State
 
 def filter_triangulated_points(points_3d, M1, M2, K, candidates, first_obs_candidates, current_R, current_t):
   distance_threshold_factor = 2
+  min_reprojection_error = 1
   # Calculate reprojection errors for each point
   projected_points_1 = cv2.projectPoints(points_3d, M1[:, :3], M1[:, 3:].flatten(), K, None)[0].reshape(-1, 2)
   projected_points_2 = cv2.projectPoints(points_3d, M2[:, :3], M2[:, 3:].flatten(), K, None)[0].reshape(-1, 2)
-  # reprojection_errors = cv2.norm(projected_points_1, projected_points_2, cv2.NORM_L2) / projected_points_2.shape[0]
-  reprojection_errors = np.linalg.norm(candidates.T - projected_points_1, axis=1) + np.linalg.norm(first_obs_candidates.T - projected_points_2, axis=1)
+  reprojection_errors = (np.linalg.norm(first_obs_candidates.T - projected_points_1, axis=1) + np.linalg.norm(candidates.T - projected_points_2, axis=1)) / 2
 
   # Transform points to the camera coordinate system
-  points_3d_camera_frame = current_R @ (points_3d + current_t[:, None])
+  points_3d_camera_frame = current_R @ points_3d + current_t[:, None]
 
   treshold_x = get_landmark_treshold(points_3d_camera_frame[0], distance_threshold_factor)
   treshold_z = get_landmark_treshold(points_3d_camera_frame[2], distance_threshold_factor)
-  
+
   valid_points_mask = \
     (points_3d_camera_frame[0] < treshold_x) & \
     (points_3d_camera_frame[2] > 0) & \
-    (points_3d_camera_frame[2] < treshold_z) \
+    (points_3d_camera_frame[2] < np.min((treshold_z, 100))) & \
+    (reprojection_errors < min_reprojection_error) \
    
   return valid_points_mask
 
 def triangulate_points(state: State, current_R, current_t, K, triangulate_signal):
-  # parameters to tune
-  distance_threshold = 1
-  angle_treshold = 30
 
   current_pose = np.hstack((current_R, current_t[:,None]))
 
@@ -49,14 +47,13 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
   distances = np.linalg.norm(T - current_t[:,None], axis=0)
   max_distance = np.max(distances)
 
-  average_depth = calculate_avarage_depth(landmarks, current_R, current_t)
-  
-  if max_distance / average_depth > thumb_rule:
+  avg_depth = np.mean((current_R @ landmarks + current_t.reshape((current_t.shape[0], 1)))[2, :])
+
+  if max_distance / avg_depth > thumb_rule:
     triangulate_signal = True
 
-  # mask = np.logical_or(distances > distance_threshold, angles > angle_treshold)
-  # print(np.sum(angles > angle_treshold))
   mask = distances > distance_threshold
+
   possible_new_landmarks = np.sum(mask)
   
   if possible_new_landmarks == 0 and triangulate_signal:
@@ -96,7 +93,6 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
       filter_keypoints_mask[indices[valid_landmark_mask]] = False
 
     if new_landmarks is not None:
-      # state.move_candidates_to_keypoints(candidates[:, ~filter_candidates_mask].astype(np.float32), new_landmarks, filter_candidates_mask)
       state.move_candidates_to_keypoints(candidates[:, ~filter_keypoints_mask].astype(np.float32), new_landmarks, filter_candidates_mask)
  
 

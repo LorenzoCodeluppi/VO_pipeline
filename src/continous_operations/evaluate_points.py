@@ -32,11 +32,9 @@ def evaluate_new_candidates(tracked_keypoints, query_image):
   min_distance = pl.params["min_distance"] # not sure about this
 
   corners = cv2.cornerHarris(query_image, blockSize=block_size, ksize=k_size, k=k)
-  # _, corners_binary = cv2.threshold(corners, 0.2 * corners.max(), 255, 0)
 
   keypoints = selectKeypoints(corners, num_corners, suppression_radius)
 
-  # TODO: check
   distances = np.linalg.norm(keypoints[:,None,:] - tracked_keypoints.T, axis=2)
   is_close = np.any(distances < min_distance, axis=1)
   new_keypoints_filtered = keypoints[~is_close]
