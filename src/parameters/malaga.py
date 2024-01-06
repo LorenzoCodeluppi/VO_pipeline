@@ -24,13 +24,15 @@ malaga_params_map = {
     "k_size": 5,  # Harris k_zie
     "k": 0.04,  # Harris magic number
     "num_corners": 300,  # Harris num of corner to extract
-    "suppression_radius": 15,  # Harris suppression radius
-    "min_distance": 16,  # Harris minimum distance from other keypoints
+    "suppression_radius": 7,  # Harris suppression radius
+    "min_distance": 8,  # Harris minimum distance from other keypoints
 
     # Triangulate (triangulate_candidates, process_frame)
     "distance_threshold": 1,  # Distance to the previous frames in start triangulate
     "min_number_keypoints": 120,  # Minimum number of keypoints to have
     "max_inlier_ratio": 0.3,  # Keypoints cannot drop under this ratio between 2 consecutives frames
     "thumb_rule": 0.2,  # Rule to start trinagulate points
+    "min_reprojection_error": 1,
+    "distance_threshold_factor": 2,
 
 }
