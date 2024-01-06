@@ -138,7 +138,7 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
 if __name__ == "__main__":
 
     # SELECT DATASET
-    dataset = Dataset.PARKING
+    dataset = Dataset.MALAGA
     # IF YOU WANT TO PLOT JUST THE LOCAL TRAJECTORY SET performance_booster = True
     performance_booster = False
     # IF YOU WANT TO COMPARE THE TRAJECTORY WITH THE GROUND TRUTH SET ground_truth_mode = True
@@ -146,7 +146,7 @@ if __name__ == "__main__":
     # IF YOU WANT TO PLOT THE FINAL COMPARISON SET final_comparison = True
     # - WARNING: IT WILL NOT PLOT THE TEMPORARY RESULTS
     # - FOR THE MALAGA DATASET NO ground_truth IS PROVIDED
-    final_comparison = False
+    final_comparison = True
     
     pl.load_parameters(dataset)
 

@@ -49,8 +49,8 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
 
   avg_depth = np.mean((current_R @ landmarks + current_t.reshape((current_t.shape[0], 1)))[2, :])
 
-  if max_distance / avg_depth > thumb_rule:
-    triangulate_signal = True
+  '''if max_distance / avg_depth > thumb_rule:
+    triangulate_signal = True'''
 
   mask = distances > distance_threshold
 
