@@ -50,32 +50,11 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
 
   avg_depth = np.mean((current_R @ landmarks + current_t.reshape((current_t.shape[0], 1)))[2, :])
 
-  '''if max_distance / avg_depth > thumb_rule:
-    triangulate_signal = True
-
-  mask = distances > distance_threshold
-
-  possible_new_landmarks = np.sum(mask)'''
-
-
   thumb_mask = distances / avg_depth > thumb_rule
   dist_mask = distances > distance_threshold
   mask = np.logical_or(thumb_mask, dist_mask)
 
   possible_new_landmarks = np.sum(mask)
-
-
-
-
-
-
-
-
-
-
-
-
-
   
   if possible_new_landmarks == 0 and triangulate_signal:
     mask = distances >= np.max(distances)

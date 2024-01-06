@@ -146,7 +146,7 @@ if __name__ == "__main__":
     # IF YOU WANT TO PLOT THE FINAL COMPARISON SET final_comparison = True
     # - WARNING: IT WILL NOT PLOT THE TEMPORARY RESULTS
     # - FOR THE MALAGA DATASET NO ground_truth IS PROVIDED
-    final_comparison = True
+    final_comparison = False
     
     pl.load_parameters(dataset)
 
