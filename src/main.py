@@ -95,8 +95,6 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
         ax3 = fig.add_subplot(gs[1, 1])
         ax4 = fig.add_subplot(gs[1, 2])
 
-    plt.pause(20)
-
     for i in range(bootstrap_frames[1] + 1, last_frame + 1):
         print(f"\n\nProcessing frame {i}\n=====================")
         if dataset == Dataset.KITTI:
@@ -140,7 +138,7 @@ def run_pipeline(dataset, state: State, bootstrap_frames, last_frame, database_i
 if __name__ == "__main__":
 
     # SELECT DATASET
-    dataset = Dataset.PARKING
+    dataset = Dataset.MALAGA
     # IF YOU WANT TO PLOT JUST THE LOCAL TRAJECTORY SET performance_booster = True
     performance_booster = False
     # IF YOU WANT TO COMPARE THE TRAJECTORY WITH THE GROUND TRUTH SET ground_truth_mode = True

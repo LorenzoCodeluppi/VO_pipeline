@@ -7,8 +7,9 @@ from structures import State
 
 
 def filter_triangulated_points(points_3d, M1, M2, K, candidates, first_obs_candidates, current_R, current_t):
-  distance_threshold_factor = 2
-  min_reprojection_error = 1
+  distance_threshold_factor = pl.params["distance_threshold_factor"]
+  min_reprojection_error = pl.params["min_reprojection_error"]
+
   # Calculate reprojection errors for each point
   projected_points_1 = cv2.projectPoints(points_3d, M1[:, :3], M1[:, 3:].flatten(), K, None)[0].reshape(-1, 2)
   projected_points_2 = cv2.projectPoints(points_3d, M2[:, :3], M2[:, 3:].flatten(), K, None)[0].reshape(-1, 2)
@@ -49,10 +50,9 @@ def triangulate_points(state: State, current_R, current_t, K, triangulate_signal
 
   avg_depth = np.mean((current_R @ landmarks + current_t.reshape((current_t.shape[0], 1)))[2, :])
 
-  if max_distance / avg_depth > thumb_rule:
-    triangulate_signal = True
-
-  mask = distances > distance_threshold
+  thumb_mask = distances / avg_depth > thumb_rule
+  dist_mask = distances > distance_threshold
+  mask = np.logical_or(thumb_mask, dist_mask)
 
   possible_new_landmarks = np.sum(mask)
   
